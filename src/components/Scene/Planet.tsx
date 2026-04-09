@@ -3,6 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { Mesh } from "three";
 import type { Planet as PlanetType } from "../../types/planet";
+import { getOrbitRadius } from "../../utils/orbitUtils";
 
 interface PlanetComponentProps {
   planet: PlanetType;
@@ -81,8 +82,7 @@ const PlanetFallbackMesh = ({ planet, position, isSelected, onSelect }: PlanetMe
 export const Planet = ({ planet, index, onSelect, isSelected, onPlanetPosition }: PlanetComponentProps) => {
   const orbitAngle = useRef((index * Math.PI * 2) / 8);
 
-  // Calculate position on orbit - scaled logarithmically for visibility
-  const orbitRadius = Math.pow(Math.log10(planet.distanceFromSun + 1), 1.8) * 3;
+  const orbitRadius = getOrbitRadius(planet.distanceFromSun);
 
   const x = orbitRadius * Math.cos(orbitAngle.current);
   const z = orbitRadius * Math.sin(orbitAngle.current);
