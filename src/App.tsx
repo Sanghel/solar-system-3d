@@ -1,9 +1,14 @@
+import { SolarSystemCanvas } from './components/Scene/SolarSystemCanvas';
+import { Lights } from './components/Scene/Lights';
+import { Sun } from './components/Scene/Sun';
+
 function App() {
   return (
-    <div>
-      <h1>Solar System 3D</h1>
-    </div>
-  )
+    <SolarSystemCanvas>
+      <Lights />
+      <Sun />
+    </SolarSystemCanvas>
+  );
 }
 
-export default App
+export default App;
