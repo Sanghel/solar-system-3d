@@ -1,73 +1,95 @@
-# React + TypeScript + Vite
+# Solar System 3D
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive 3D visualization of the Solar System built with React, Three.js, and Vite.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project creates a beautiful, interactive 3D model of the Solar System where users can explore planets, learn about their characteristics, and navigate through space using intuitive controls.
 
-## React Compiler
+## Technologies
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** - UI library
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Fast build tool and dev server
+- **Three.js** - 3D graphics library
+- **React Three Fiber** - React renderer for Three.js
+- **Drei** - Useful helpers for React Three Fiber
+- **pnpm** - Fast, disk space efficient package manager
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
+- Node.js v20.19+ or v22.12+
+- pnpm v10+
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone the repository:
+```bash
+git clone https://github.com/Sanghel/solar-system-3d.git
+cd solar-system-3d
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```bash
+pnpm install
 ```
+
+3. Start the development server:
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## Available Scripts
+
+- `pnpm dev` - Start development server with HMR
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build locally
+- `pnpm lint` - Run ESLint
+
+## Project Structure
+
+```
+src/
+├── components/       # React components
+│   ├── Scene/       # 3D scene components
+│   └── UI/          # UI interface components
+├── data/            # Static data (planet information)
+├── types/           # TypeScript type definitions
+├── utils/           # Utility functions
+├── hooks/           # Custom React hooks
+├── App.tsx          # Main App component
+├── main.tsx         # Entry point
+└── index.css        # Global styles
+```
+
+## Development
+
+This project follows a structured Git Flow workflow with organized phases for development:
+
+### Git Workflow
+- `main` - Production-ready code
+- `develop` - Integration branch for features
+- `feature/[issue-number]-[description]` - Individual feature branches
+
+See the project plan for detailed development phases.
+
+## Features (In Development)
+
+- Interactive 3D Solar System visualization
+- Planet selection with detailed information panels
+- Realistic planet textures and proportions
+- Smooth camera navigation and animations
+- Orbital mechanics and planet rotations
+- Time control (pause, play, speed adjustment)
+- Responsive design for different screen sizes
+
+## License
+
+This project is open source.
+
+## Author
+
+Created as a professional portfolio project.
