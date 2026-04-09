@@ -3,10 +3,17 @@ import { Mesh } from 'three';
 import { Planet } from '../../types/planet';
 
 interface SelectionRingProps {
+  /** Selected planet data (null if nothing selected) */
   planet: Planet | null;
+  /** Position of the selected planet in 3D space */
   planetPosition?: [number, number, number];
 }
 
+/**
+ * SelectionRing Component
+ * Renders a green torus ring around the currently selected planet
+ * Provides visual feedback for selection
+ */
 export const SelectionRing = ({ planet, planetPosition }: SelectionRingProps) => {
   const meshRef = useRef<Mesh>(null);
 
