@@ -1,23 +1,24 @@
 export const Lights = () => {
   return (
     <>
-      {/* Ambient light - soft overall illumination */}
-      <ambientLight intensity={0.4} />
+      {/* Ambient light - enough to see dark sides of planets without washing out textures */}
+      <ambientLight intensity={0.15} />
 
-      {/* Point light at Sun position - primary light source */}
+      {/* Point light at Sun position - primary source, simulates solar radiation */}
       <pointLight
         position={[0, 0, 0]}
-        intensity={2}
-        distance={1000}
-        decay={2}
+        intensity={3}
+        distance={2000}
+        decay={1.5}
+        color="#fff5e0"
       />
 
-      {/* Additional subtle light for backlighting */}
+      {/* Subtle fill light from behind to prevent fully-black backsides */}
       <pointLight
         position={[200, 100, -200]}
-        intensity={0.3}
+        intensity={0.1}
         color="#6699ff"
-        distance={500}
+        distance={800}
       />
     </>
   );

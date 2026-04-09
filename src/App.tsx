@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { SolarSystemCanvas } from './components/Scene/SolarSystemCanvas';
 import { Lights } from './components/Scene/Lights';
 import { Sun } from './components/Scene/Sun';
 import { Planet } from './components/Scene/Planet';
 import { SelectionRing } from './components/Scene/SelectionRing';
 import { PlanetInfo } from './components/UI/PlanetInfo';
+import { SceneLoader } from './components/UI/LoadingScreen';
 import { planets } from './data/planets';
 import { usePlanetSelection } from './hooks/usePlanetSelection';
 
@@ -18,19 +19,21 @@ function App() {
   return (
     <>
       <SolarSystemCanvas onBackgroundClick={deselectPlanet}>
-        <Lights />
-        <Sun />
-        {planetsToRender.map((planet, index) => (
-          <Planet
-            key={planet.id}
-            planet={planet}
-            index={index}
-            onSelect={selectPlanet}
-            isSelected={selectedPlanet?.id === planet.id}
-            onPlanetPosition={setSelectedPlanetPosition}
-          />
-        ))}
-        <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition ?? undefined} />
+        <Suspense fallback={<SceneLoader />}>
+          <Lights />
+          <Sun />
+          {planetsToRender.map((planet, index) => (
+            <Planet
+              key={planet.id}
+              planet={planet}
+              index={index}
+              onSelect={selectPlanet}
+              isSelected={selectedPlanet?.id === planet.id}
+              onPlanetPosition={setSelectedPlanetPosition}
+            />
+          ))}
+          <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition ?? undefined} />
+        </Suspense>
       </SolarSystemCanvas>
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
     </>

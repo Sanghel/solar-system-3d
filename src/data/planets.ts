@@ -15,6 +15,7 @@ export const planets: Planet[] = [
     relativeSize: 28,
     rotationSpeed: 0.02,
     orbitSpeed: 0,
+    texture: "/textures/sun.jpg",
   },
   {
     id: "mercury",
@@ -30,6 +31,7 @@ export const planets: Planet[] = [
     relativeSize: 3.8,
     rotationSpeed: 0.004,
     orbitSpeed: 0.04,
+    texture: "/textures/mercury.jpg",
   },
   {
     id: "venus",
@@ -45,6 +47,7 @@ export const planets: Planet[] = [
     relativeSize: 9.5,
     rotationSpeed: 0.002,
     orbitSpeed: 0.015,
+    texture: "/textures/venus.jpg",
   },
   {
     id: "earth",
@@ -60,6 +63,7 @@ export const planets: Planet[] = [
     relativeSize: 10,
     rotationSpeed: 0.01,
     orbitSpeed: 0.01,
+    texture: "/textures/earth.jpg",
   },
   {
     id: "mars",
@@ -75,6 +79,7 @@ export const planets: Planet[] = [
     relativeSize: 5.3,
     rotationSpeed: 0.0098,
     orbitSpeed: 0.008,
+    texture: "/textures/mars.jpg",
   },
   {
     id: "jupiter",
@@ -90,6 +95,7 @@ export const planets: Planet[] = [
     relativeSize: 25,
     rotationSpeed: 0.02,
     orbitSpeed: 0.002,
+    texture: "/textures/jupiter.jpg",
   },
   {
     id: "saturn",
@@ -105,6 +111,7 @@ export const planets: Planet[] = [
     relativeSize: 20,
     rotationSpeed: 0.018,
     orbitSpeed: 0.0009,
+    texture: "/textures/saturn.jpg",
   },
   {
     id: "uranus",
@@ -120,6 +127,7 @@ export const planets: Planet[] = [
     relativeSize: 15,
     rotationSpeed: 0.014,
     orbitSpeed: 0.0004,
+    texture: "/textures/uranus.jpg",
   },
   {
     id: "neptune",
@@ -135,5 +143,6 @@ export const planets: Planet[] = [
     relativeSize: 15,
     rotationSpeed: 0.016,
     orbitSpeed: 0.0001,
+    texture: "/textures/neptune.jpg",
   },
 ];
