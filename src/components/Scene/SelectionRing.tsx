@@ -1,10 +1,10 @@
-import { useRef, useEffect } from 'react';
-import { Mesh } from 'three';
-import { Planet } from '../../types/planet';
+import { useRef, useEffect } from "react";
+import { Mesh } from "three";
+import type { Planet as PlanetType } from "../../types/planet";
 
 interface SelectionRingProps {
   /** Selected planet data (null if nothing selected) */
-  planet: Planet | null;
+  planet: PlanetType | null;
   /** Position of the selected planet in 3D space */
   planetPosition?: [number, number, number];
 }
@@ -14,7 +14,10 @@ interface SelectionRingProps {
  * Renders a green torus ring around the currently selected planet
  * Provides visual feedback for selection
  */
-export const SelectionRing = ({ planet, planetPosition }: SelectionRingProps) => {
+export const SelectionRing = ({
+  planet,
+  planetPosition,
+}: SelectionRingProps) => {
   const meshRef = useRef<Mesh>(null);
 
   useEffect(() => {
@@ -28,9 +31,13 @@ export const SelectionRing = ({ planet, planetPosition }: SelectionRingProps) =>
   const ringRadius = planet.relativeSize * 1.5;
 
   return (
-    <mesh ref={meshRef} position={planetPosition} rotation={[Math.PI / 2, 0, 0]}>
+    <mesh
+      ref={meshRef}
+      position={planetPosition}
+      rotation={[Math.PI / 2, 0, 0]}
+    >
       <torusGeometry args={[ringRadius, ringRadius * 0.1, 16, 32]} />
-      <meshBasicMaterial color="#00ff00" emissive="#00ff00" emissiveIntensity={0.8} />
+      <meshBasicMaterial color="#00ff00" />
     </mesh>
   );
 };

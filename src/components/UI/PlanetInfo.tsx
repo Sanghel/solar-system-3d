@@ -1,4 +1,4 @@
-import { Planet } from '../../types/planet';
+import type { Planet } from '../../types/planet';
 import './PlanetInfo.css';
 
 interface PlanetInfoProps {
