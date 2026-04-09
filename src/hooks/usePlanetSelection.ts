@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Planet } from '../types/planet';
+import type { Planet } from '../types/planet';
 
 interface UsePlanetSelectionReturn {
   /** Currently selected planet, or null if none selected */

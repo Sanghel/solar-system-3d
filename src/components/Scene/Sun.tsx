@@ -7,12 +7,7 @@ export const Sun = () => {
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>
       <sphereGeometry args={[35, 64, 64]} />
-      <meshBasicMaterial
-        color="#FDB813"
-        emissive="#FDB813"
-        emissiveIntensity={1.5}
-        toneMapped={false}
-      />
+      <meshBasicMaterial color="#FDB813" toneMapped={false} />
     </mesh>
   );
 };

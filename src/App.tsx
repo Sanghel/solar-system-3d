@@ -30,7 +30,7 @@ function App() {
             onPlanetPosition={setSelectedPlanetPosition}
           />
         ))}
-        <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition} />
+        <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition ?? undefined} />
       </SolarSystemCanvas>
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
     </>
