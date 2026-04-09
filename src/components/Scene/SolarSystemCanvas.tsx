@@ -1,12 +1,15 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
+import { Mesh } from 'three';
 
 interface SolarSystemCanvasProps {
   children?: ReactNode;
+  onBackgroundClick?: () => void;
 }
 
-export const SolarSystemCanvas = ({ children }: SolarSystemCanvasProps) => {
+export const SolarSystemCanvas = ({ children, onBackgroundClick }: SolarSystemCanvasProps) => {
+  const backgroundRef = useRef<Mesh>(null);
   return (
     <Canvas
       camera={{
@@ -32,6 +35,16 @@ export const SolarSystemCanvas = ({ children }: SolarSystemCanvasProps) => {
         minDistance={50}
         maxDistance={500}
       />
+
+      {/* Background plane to capture deselection clicks */}
+      <mesh
+        ref={backgroundRef}
+        position={[0, 0, -500]}
+        onClick={onBackgroundClick}
+      >
+        <planeGeometry args={[10000, 10000]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
 
       {/* Children components will be rendered here */}
       {children}
