@@ -6,9 +6,11 @@ import type { Planet as PlanetType } from "../../types/planet";
 interface PlanetComponentProps {
   planet: PlanetType;
   index: number;
+  onSelect?: (planet: PlanetType) => void;
+  isSelected?: boolean;
 }
 
-export const Planet = ({ planet, index }: PlanetComponentProps) => {
+export const Planet = ({ planet, index, onSelect, isSelected }: PlanetComponentProps) => {
   const meshRef = useRef<Mesh>(null);
   const orbitAngle = useRef((index * Math.PI * 2) / 8);
 
@@ -27,12 +29,19 @@ export const Planet = ({ planet, index }: PlanetComponentProps) => {
   });
 
   return (
-    <mesh ref={meshRef} position={[x, 0, z]} name={planet.id}>
+    <mesh
+      ref={meshRef}
+      position={[x, 0, z]}
+      name={planet.id}
+      onClick={() => onSelect?.(planet)}
+    >
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
         color={planet.baseColor}
         metalness={0.3}
         roughness={0.7}
+        emissive={isSelected ? planet.baseColor : "#000000"}
+        emissiveIntensity={isSelected ? 0.5 : 0}
       />
     </mesh>
   );
