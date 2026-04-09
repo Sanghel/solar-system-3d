@@ -1,7 +1,7 @@
 import { useRef, Suspense } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import { Mesh } from "three";
+import { Mesh, Group } from "three";
 import type { Planet as PlanetType } from "../../types/planet";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 
@@ -10,31 +10,31 @@ interface PlanetComponentProps {
   index: number;
   onSelect?: (planet: PlanetType) => void;
   isSelected?: boolean;
-  onPlanetPosition?: (position: [number, number, number]) => void;
+  /** timeScale from SimulationContext — multiplies rotation and orbit speed */
+  timeScale?: number;
 }
 
 interface PlanetMeshProps {
   planet: PlanetType;
-  position: [number, number, number];
   isSelected?: boolean;
   onSelect?: (planet: PlanetType) => void;
+  timeScale: number;
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({ planet, position, isSelected, onSelect }: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({ planet, isSelected, onSelect, timeScale }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += planet.rotationSpeed;
+      meshRef.current.rotation.y += planet.rotationSpeed * timeScale * delta * 60;
     }
   });
 
   return (
     <mesh
       ref={meshRef}
-      position={position}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
     >
@@ -51,19 +51,18 @@ const PlanetTexturedMesh = ({ planet, position, isSelected, onSelect }: PlanetMe
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, position, isSelected, onSelect }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, isSelected, onSelect, timeScale }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += planet.rotationSpeed;
+      meshRef.current.rotation.y += planet.rotationSpeed * timeScale * delta * 60;
     }
   });
 
   return (
     <mesh
       ref={meshRef}
-      position={position}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
     >
@@ -79,29 +78,52 @@ const PlanetFallbackMesh = ({ planet, position, isSelected, onSelect }: PlanetMe
   );
 };
 
-export const Planet = ({ planet, index, onSelect, isSelected, onPlanetPosition }: PlanetComponentProps) => {
-  const orbitAngle = useRef((index * Math.PI * 2) / 8);
+/** Selection ring rendered inside the planet group so it follows the orbit. */
+const PlanetSelectionRing = ({ planet }: { planet: PlanetType }) => {
+  const ringRadius = planet.relativeSize * 1.5;
+  return (
+    <mesh rotation={[Math.PI / 2, 0, 0]}>
+      <torusGeometry args={[ringRadius, ringRadius * 0.1, 16, 32]} />
+      <meshBasicMaterial color="#00ff00" />
+    </mesh>
+  );
+};
 
+export const Planet = ({
+  planet,
+  index,
+  onSelect,
+  isSelected,
+  timeScale = 1,
+}: PlanetComponentProps) => {
+  const groupRef = useRef<Group>(null);
   const orbitRadius = getOrbitRadius(planet.distanceFromSun);
+  const initialAngle = (index * Math.PI * 2) / 8;
+  const angleRef = useRef(initialAngle);
 
-  const x = orbitRadius * Math.cos(orbitAngle.current);
-  const z = orbitRadius * Math.sin(orbitAngle.current);
-  const position: [number, number, number] = [x, 0, z];
+  useFrame((_, delta) => {
+    angleRef.current += planet.orbitSpeed * timeScale * delta * 60;
+    if (groupRef.current) {
+      groupRef.current.position.set(
+        orbitRadius * Math.cos(angleRef.current),
+        0,
+        orbitRadius * Math.sin(angleRef.current)
+      );
+    }
+  });
 
-  // Notify parent when selected to show ring
-  if (isSelected) {
-    onPlanetPosition?.(position);
-  }
+  const meshProps: PlanetMeshProps = { planet, isSelected, onSelect, timeScale };
 
-  const meshProps: PlanetMeshProps = { planet, position, isSelected, onSelect };
-
-  if (planet.texture) {
-    return (
-      <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
-        <PlanetTexturedMesh {...meshProps} />
-      </Suspense>
-    );
-  }
-
-  return <PlanetFallbackMesh {...meshProps} />;
+  return (
+    <group ref={groupRef}>
+      {planet.texture ? (
+        <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
+          <PlanetTexturedMesh {...meshProps} />
+        </Suspense>
+      ) : (
+        <PlanetFallbackMesh {...meshProps} />
+      )}
+      {isSelected && <PlanetSelectionRing planet={planet} />}
+    </group>
+  );
 };
