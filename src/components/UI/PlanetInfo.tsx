@@ -2,10 +2,17 @@ import { Planet } from '../../types/planet';
 import './PlanetInfo.css';
 
 interface PlanetInfoProps {
+  /** Planet data to display, or null if no planet selected */
   planet: Planet | null;
+  /** Callback function when close button is clicked */
   onClose: () => void;
 }
 
+/**
+ * PlanetInfo Component
+ * Displays detailed information about a selected planet in a slide-out panel
+ * Shows planet properties, fun facts, and a close button
+ */
 export const PlanetInfo = ({ planet, onClose }: PlanetInfoProps) => {
   if (!planet) return null;
 
