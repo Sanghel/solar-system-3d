@@ -89,6 +89,23 @@ const PlanetSelectionRing = ({ planet }: { planet: PlanetType }) => {
   );
 };
 
+/** Saturn's iconic ring system — RingGeometry tilted to match Saturn's appearance. */
+const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
+  const innerRadius = planetRadius * 1.3;
+  const outerRadius = planetRadius * 2.2;
+  return (
+    <mesh rotation={[Math.PI / 2.5, 0, 0]}>
+      <ringGeometry args={[innerRadius, outerRadius, 64]} />
+      <meshBasicMaterial
+        color="#c2a96e"
+        transparent
+        opacity={0.75}
+        side={2}
+      />
+    </mesh>
+  );
+};
+
 export const Planet = ({
   planet,
   index,
@@ -123,6 +140,7 @@ export const Planet = ({
       ) : (
         <PlanetFallbackMesh {...meshProps} />
       )}
+      {planet.id === "saturn" && <SaturnRing planetRadius={planet.relativeSize} />}
       {isSelected && <PlanetSelectionRing planet={planet} />}
     </group>
   );
