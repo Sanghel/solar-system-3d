@@ -12,8 +12,8 @@ function App() {
     <SolarSystemCanvas>
       <Lights />
       <Sun />
-      {planetsToRender.map((planet) => (
-        <Planet key={planet.id} planet={planet} />
+      {planetsToRender.map((planet, index) => (
+        <Planet key={planet.id} planet={planet} index={index} />
       ))}
     </SolarSystemCanvas>
   );

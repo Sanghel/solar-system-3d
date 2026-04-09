@@ -5,7 +5,7 @@ export interface Planet {
   distanceFromSun: number;
   temperature: number;
   numberOfSatellites: number;
-  type: 'terrestrial' | 'gas-giant' | 'ice-giant' | 'dwarf' | 'star';
+  type: "terrestrial" | "gas-giant" | "ice-giant" | "dwarf" | "star";
   funFact: string;
   baseColor: string;
   relativeSize: number;
