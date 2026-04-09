@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useSimulation } from "../../context/SimulationContext";
 import "./TimeControl.css";
 
@@ -5,6 +6,10 @@ const SPEED_STEPS = [0.1, 0.25, 0.5, 1, 2, 5, 10];
 
 export const TimeControl = () => {
   const { timeScale, setTimeScale, isPaused, togglePause } = useSimulation();
+  const sliderIndex = useMemo(
+    () => Math.max(0, SPEED_STEPS.indexOf(timeScale)),
+    [timeScale]
+  );
 
   return (
     <div className="time-control">
@@ -25,7 +30,7 @@ export const TimeControl = () => {
           min={0}
           max={SPEED_STEPS.length - 1}
           step={1}
-          value={SPEED_STEPS.indexOf(timeScale) !== -1 ? SPEED_STEPS.indexOf(timeScale) : 3}
+          value={sliderIndex}
           onChange={(e) => setTimeScale(SPEED_STEPS[Number(e.target.value)])}
           aria-label="Simulation speed"
           disabled={isPaused}
