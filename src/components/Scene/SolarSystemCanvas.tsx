@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { ReactNode, useRef } from 'react';
+import { useRef } from 'react';
+import type { ReactNode } from 'react';
 import { Mesh } from 'three';
 
 interface SolarSystemCanvasProps {
