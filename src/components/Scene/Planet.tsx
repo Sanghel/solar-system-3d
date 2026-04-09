@@ -4,27 +4,26 @@ import { useTexture } from "@react-three/drei";
 import { Mesh, Group } from "three";
 import type { Planet as PlanetType } from "../../types/planet";
 import { getOrbitRadius } from "../../utils/orbitUtils";
+import { useSimulation } from "../../context/SimulationContext";
 
 interface PlanetComponentProps {
   planet: PlanetType;
   index: number;
   onSelect?: (planet: PlanetType) => void;
   isSelected?: boolean;
-  /** timeScale from SimulationContext — multiplies rotation and orbit speed */
-  timeScale?: number;
 }
 
 interface PlanetMeshProps {
   planet: PlanetType;
   isSelected?: boolean;
   onSelect?: (planet: PlanetType) => void;
-  timeScale: number;
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({ planet, isSelected, onSelect, timeScale }: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
+  const { timeScale } = useSimulation();
 
   useFrame((_, delta) => {
     if (meshRef.current) {
@@ -51,8 +50,9 @@ const PlanetTexturedMesh = ({ planet, isSelected, onSelect, timeScale }: PlanetM
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, isSelected, onSelect, timeScale }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
+  const { timeScale } = useSimulation();
 
   useFrame((_, delta) => {
     if (meshRef.current) {
@@ -94,9 +94,9 @@ export const Planet = ({
   index,
   onSelect,
   isSelected,
-  timeScale = 1,
 }: PlanetComponentProps) => {
   const groupRef = useRef<Group>(null);
+  const { timeScale } = useSimulation();
   const orbitRadius = getOrbitRadius(planet.distanceFromSun);
   const initialAngle = (index * Math.PI * 2) / 8;
   const angleRef = useRef(initialAngle);
@@ -112,7 +112,7 @@ export const Planet = ({
     }
   });
 
-  const meshProps: PlanetMeshProps = { planet, isSelected, onSelect, timeScale };
+  const meshProps: PlanetMeshProps = { planet, isSelected, onSelect };
 
   return (
     <group ref={groupRef}>
