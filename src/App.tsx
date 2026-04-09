@@ -1,10 +1,9 @@
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { SolarSystemCanvas } from './components/Scene/SolarSystemCanvas';
 import { Lights } from './components/Scene/Lights';
 import { Sun } from './components/Scene/Sun';
 import { Planet } from './components/Scene/Planet';
 import { Orbit } from './components/Scene/Orbit';
-import { SelectionRing } from './components/Scene/SelectionRing';
 import { PlanetInfo } from './components/UI/PlanetInfo';
 import { SceneLoader } from './components/UI/LoadingScreen';
 import { planets } from './data/planets';
@@ -13,7 +12,6 @@ import { getOrbitRadius } from './utils/orbitUtils';
 
 function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
-  const [selectedPlanetPosition, setSelectedPlanetPosition] = useState<[number, number, number] | null>(null);
 
   // Filter out the Sun, render only planets
   const planetsToRender = planets.filter((p) => p.type !== 'star');
@@ -35,10 +33,8 @@ function App() {
               index={index}
               onSelect={selectPlanet}
               isSelected={selectedPlanet?.id === planet.id}
-              onPlanetPosition={setSelectedPlanetPosition}
             />
           ))}
-          <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition ?? undefined} />
         </Suspense>
       </SolarSystemCanvas>
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
