@@ -8,6 +8,7 @@
   gap: var(--space-1);
   z-index: var(--z-ui);
   animation: navFadeIn 0.5s ease both;
+  will-change: transform, opacity;
 }
 
 @keyframes navFadeIn {
