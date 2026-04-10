@@ -1,117 +1,131 @@
 # Solar System 3D
 
-An interactive 3D visualization of the Solar System built with React, Three.js, and Vite.
+An interactive 3D visualization of the Solar System built with React, Three.js, and Vite. Explore all 8 planets, learn their key data, and navigate through space with smooth camera animations.
 
-## Description
+## Features
 
-This project creates a beautiful, interactive 3D model of the Solar System where users can explore planets, learn about their characteristics, and navigate through space using intuitive controls.
+- **Interactive 3D scene** — click any planet to fly the camera to it
+- **Planet info panel** — diameter, temperature, distance from Sun, satellites, orbital speed and a fun fact per planet
+- **Time controls** — pause, play, and adjust simulation speed (0.1× to 10×)
+- **Planet navigation** — quick-access sidebar to jump between planets
+- **Realistic textures** — high-resolution JPG maps for all planets and the Sun
+- **Saturn's rings** — two-layer ring system with transparency
+- **Hover tooltips** — planet name and diameter on hover
+- **Responsive layout** — adapts to mobile and desktop viewports
+- **Error boundary** — friendly error screen if something goes wrong
 
 ## Technologies
 
-- **React 19** - UI library
-- **TypeScript** - Type-safe JavaScript
-- **Vite** - Fast build tool and dev server
-- **Three.js** - 3D graphics library
-- **React Three Fiber** - React renderer for Three.js
-- **Drei** - Useful helpers for React Three Fiber
-- **pnpm** - Fast, disk space efficient package manager
+| Technology | Version | Role |
+|---|---|---|
+| [React](https://react.dev) | 19 | UI layer and component model |
+| [TypeScript](https://www.typescriptlang.org) | 6 | Type safety across the codebase |
+| [Vite](https://vite.dev) | 8 | Dev server and production bundler |
+| [Three.js](https://threejs.org) | 0.174 | 3D rendering engine |
+| [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) | 9 | React renderer for Three.js |
+| [Drei](https://github.com/pmndrs/drei) | 10 | Helpers for React Three Fiber |
+| [pnpm](https://pnpm.io) | 10 | Fast, disk-efficient package manager |
 
 ## Installation
 
 ### Prerequisites
-- Node.js v20.19+ or v22.12+
-- pnpm v10+
+
+- **Node.js** v20.19+ or v22.12+
+- **pnpm** v10+
 
 ### Setup
 
-1. Clone the repository:
 ```bash
+# Clone the repository
 git clone https://github.com/Sanghel/solar-system-3d.git
 cd solar-system-3d
-```
 
-2. Install dependencies:
-```bash
+# Install dependencies
 pnpm install
-```
 
-3. Start the development server:
-```bash
+# Start the development server
 pnpm dev
 ```
 
-The application will be available at `http://localhost:5173`
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Available Scripts
 
-- `pnpm dev` - Start development server with HMR
-- `pnpm build` - Build for production
-- `pnpm preview` - Preview production build locally
-- `pnpm lint` - Run ESLint
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start development server with HMR |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm lint` | Run ESLint |
 
 ## Project Structure
 
 ```
-src/
-├── components/       # React components
-│   ├── Scene/       # 3D scene components
-│   └── UI/          # UI interface components
-├── data/            # Static data (planet information)
-├── types/           # TypeScript type definitions
-├── utils/           # Utility functions
-├── hooks/           # Custom React hooks
-├── App.tsx          # Main App component
-├── main.tsx         # Entry point
-└── index.css        # Global styles
+solar-system-3d/
+├── public/
+│   ├── favicon.svg
+│   └── textures/           # Planet and Sun JPG texture maps
+├── src/
+│   ├── components/
+│   │   ├── Scene/          # 3D components (Canvas, Planet, Sun, Orbit…)
+│   │   └── UI/             # Interface components (PlanetInfo, Navigation…)
+│   ├── context/
+│   │   └── SimulationContext.tsx  # Global time scale and pause state
+│   ├── data/
+│   │   └── planets.ts      # Planet data (size, distance, texture, fun facts…)
+│   ├── hooks/
+│   │   ├── useCameraAnimation.ts  # Smooth camera fly-to logic
+│   │   └── usePlanetSelection.ts  # Selection state management
+│   ├── styles/
+│   │   └── global.css      # CSS custom properties and base styles
+│   ├── types/
+│   │   └── planet.ts       # Planet TypeScript interface
+│   ├── utils/
+│   │   └── orbitUtils.ts   # Orbit radius calculation helpers
+│   ├── App.tsx             # Root component
+│   └── main.tsx            # Entry point
+├── plan/
+│   └── plan.md             # Development roadmap
+└── vite.config.ts
 ```
 
 ## Performance
 
-The application is optimized for fast load times and smooth 60 FPS rendering:
+The application is split into separate chunks so the browser can cache vendor libraries independently of app code:
 
-### Bundle splitting
-| Chunk | Size (gzip) | Notes |
-|-------|-------------|-------|
-| `vendor-r3f` | 304 kB | Three.js + R3F + Drei — cached indefinitely |
-| `index` | 6 kB | App entry point |
-| `PlanetInfo` | 0.94 kB | Lazy-loaded on first planet selection |
-| `PlanetNavigation` | 0.57 kB | Lazy-loaded on first render |
-| `TimeControl` | 0.53 kB | Lazy-loaded on first render |
+| Chunk | Gzip size | Notes |
+|---|---|---|
+| `vendor-r3f` | ~304 kB | Three.js + R3F + Drei — long-term cached |
+| `index` | ~6 kB | App entry point |
+| `PlanetInfo` | ~1 kB | Lazy-loaded on first planet selection |
+| `PlanetNavigation` | ~1 kB | Lazy-loaded on first render |
+| `TimeControl` | ~1 kB | Lazy-loaded on first render |
 
-### Rendering optimizations
-- `React.memo` on all components to prevent unnecessary re-renders
-- `useCallback` / `useMemo` to stabilize references and avoid breaking memoization
-- `React.lazy` + `Suspense` for UI panels (code-split from the 3D engine)
-- `useTexture.preload()` kicks off all planet texture downloads at module load time
-- Named Three.js imports (`import { Vector3 }`) instead of namespace imports for tree-shaking
-
----
+Key optimizations: `React.memo` on all components, `useCallback`/`useMemo` for stable references, `useTexture.preload()` for early texture fetching, and manual chunk splitting via Vite.
 
 ## Development
 
-This project follows a structured Git Flow workflow with organized phases for development:
-
 ### Git Workflow
-- `main` - Production-ready code
-- `develop` - Integration branch for features
-- `feature/[issue-number]-[description]` - Individual feature branches
 
-See the project plan for detailed development phases.
+| Branch | Purpose |
+|---|---|
+| `main` | Production-ready code |
+| `develop` | Integration branch for features |
+| `feature/[issue]-[description]` | Individual feature branches |
 
-## Features (In Development)
+Each feature is developed on its own branch, reviewed via PR into `develop`, then batched into a phase PR into `main`.
 
-- Interactive 3D Solar System visualization
-- Planet selection with detailed information panels
-- Realistic planet textures and proportions
-- Smooth camera navigation and animations
-- Orbital mechanics and planet rotations
-- Time control (pause, play, speed adjustment)
-- Responsive design for different screen sizes
+### Conventions
+
+- Components use **named exports**
+- Lazy-loaded components resolve through `.then(m => ({ default: m.Component }))`
+- All components that receive stable props are wrapped with `React.memo`
+- CSS custom properties are defined in `src/styles/global.css`
 
 ## License
 
-This project is open source.
+MIT — see [LICENSE](LICENSE) for details.
 
 ## Author
 
-Created as a professional portfolio project.
+Created by **Sanghel González** as a professional portfolio project.
