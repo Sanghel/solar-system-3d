@@ -15,11 +15,12 @@ interface PlanetComponentProps {
 
 interface PlanetMeshProps {
   planet: PlanetType;
+  isSelected?: boolean;
   onSelect?: (planet: PlanetType) => void;
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({ planet, onSelect }: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
   const { timeScale } = useSimulation();
@@ -38,13 +39,15 @@ const PlanetTexturedMesh = ({ planet, onSelect }: PlanetMeshProps) => {
         map={texture}
         metalness={0.1}
         roughness={0.8}
+        emissive="#ffffff"
+        emissiveIntensity={isSelected ? 0.12 : 0}
       />
     </mesh>
   );
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, onSelect }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const { timeScale } = useSimulation();
 
@@ -62,6 +65,8 @@ const PlanetFallbackMesh = ({ planet, onSelect }: PlanetMeshProps) => {
         color={planet.baseColor}
         metalness={0.3}
         roughness={0.7}
+        emissive="#ffffff"
+        emissiveIntensity={isSelected ? 0.12 : 0}
       />
     </mesh>
   );
@@ -151,7 +156,7 @@ export const Planet = ({
     }
   });
 
-  const meshProps: PlanetMeshProps = { planet, onSelect };
+  const meshProps: PlanetMeshProps = { planet, isSelected, onSelect };
 
   return (
     <group ref={groupRef}>
