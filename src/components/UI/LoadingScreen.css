@@ -1,0 +1,124 @@
+/* ── Loading Screen Overlay ── */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  background: radial-gradient(ellipse at center, #0a0e1e 0%, #000000 70%);
+  z-index: var(--z-overlay, 200);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen--fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── Orbital rings animation ── */
+.loading-rings {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loading-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  animation: spin linear infinite;
+}
+
+.loading-ring--1 {
+  border-top-color: var(--color-accent, #00ffc8);
+  border-right-color: var(--color-accent-faint, rgba(0,255,200,0.15));
+  animation-duration: 2.4s;
+}
+
+.loading-ring--2 {
+  inset: 14px;
+  border-top-color: var(--color-solar, #fdb813);
+  border-left-color: rgba(253, 184, 19, 0.15);
+  animation-duration: 1.8s;
+  animation-direction: reverse;
+}
+
+.loading-ring--3 {
+  inset: 28px;
+  border-top-color: rgba(180, 160, 255, 0.8);
+  border-right-color: rgba(180, 160, 255, 0.15);
+  animation-duration: 3s;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Center sun dot ── */
+.loading-sun {
+  position: absolute;
+  inset: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-solar, #fdb813) 0%, rgba(253, 184, 19, 0.4) 60%, transparent 100%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.9; }
+  50%       { transform: scale(1.1); opacity: 1;   }
+}
+
+/* ── Text ── */
+.loading-text {
+  text-align: center;
+}
+
+.loading-title {
+  font-size: var(--text-2xl, 28px);
+  font-weight: 700;
+  color: var(--color-white, #fff);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.loading-subtitle {
+  font-size: var(--text-sm, 12px);
+  font-family: var(--font-mono, monospace);
+  color: var(--color-white-50, rgba(255,255,255,0.5));
+  letter-spacing: 0.06em;
+}
+
+/* ── Progress bar ── */
+.loading-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-progress__track {
+  width: 200px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent, #00ffc8), var(--color-solar, #fdb813));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.loading-progress__value {
+  font-size: var(--text-xs, 11px);
+  font-family: var(--font-mono, monospace);
+  color: var(--color-white-50, rgba(255,255,255,0.5));
+  min-width: 32px;
+  text-align: right;
+}
