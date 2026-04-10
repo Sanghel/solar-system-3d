@@ -19,7 +19,7 @@ function App() {
 
   return (
     <>
-      <SolarSystemCanvas onBackgroundClick={deselectPlanet}>
+      <SolarSystemCanvas onBackgroundClick={deselectPlanet} selectedPlanet={selectedPlanet}>
         <Suspense fallback={<SceneLoader />}>
           <Lights />
           <Sun />
