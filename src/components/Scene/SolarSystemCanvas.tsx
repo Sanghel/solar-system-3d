@@ -34,7 +34,7 @@ export const SolarSystemCanvas = ({ children, onBackgroundClick }: SolarSystemCa
         autoRotate
         autoRotateSpeed={0.5}
         minDistance={50}
-        maxDistance={500}
+        maxDistance={650}
       />
 
       {/* Background plane to capture deselection clicks */}

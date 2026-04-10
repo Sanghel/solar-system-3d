@@ -1,13 +1,24 @@
 import { useRef, Suspense } from "react";
+import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { Mesh } from "three";
+import { useSimulation } from "../../context/SimulationContext";
 
 const SUN_RADIUS = 35;
 const TEXTURE_PATH = "/textures/sun.jpg";
 
+const SUN_ROTATION_SPEED = 0.003;
+
 const SunTexturedMesh = () => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(TEXTURE_PATH);
+  const { timeScale } = useSimulation();
+
+  useFrame((_, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += SUN_ROTATION_SPEED * timeScale * delta * 60;
+    }
+  });
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]}>

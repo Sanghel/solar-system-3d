@@ -1,20 +1,21 @@
-import { Suspense, useState } from 'react';
-import { SolarSystemCanvas } from './components/Scene/SolarSystemCanvas';
-import { Lights } from './components/Scene/Lights';
-import { Sun } from './components/Scene/Sun';
-import { Planet } from './components/Scene/Planet';
-import { SelectionRing } from './components/Scene/SelectionRing';
-import { PlanetInfo } from './components/UI/PlanetInfo';
-import { SceneLoader } from './components/UI/LoadingScreen';
-import { planets } from './data/planets';
-import { usePlanetSelection } from './hooks/usePlanetSelection';
+import { Suspense } from "react";
+import { SolarSystemCanvas } from "./components/Scene/SolarSystemCanvas";
+import { Lights } from "./components/Scene/Lights";
+import { Sun } from "./components/Scene/Sun";
+import { Planet } from "./components/Scene/Planet";
+import { Orbit } from "./components/Scene/Orbit";
+import { PlanetInfo } from "./components/UI/PlanetInfo";
+import { SceneLoader } from "./components/UI/LoadingScreen";
+import { TimeControl } from "./components/UI/TimeControl";
+import { planets } from "./data/planets";
+import { usePlanetSelection } from "./hooks/usePlanetSelection";
+import { getOrbitRadius } from "./utils/orbitUtils";
 
 function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
-  const [selectedPlanetPosition, setSelectedPlanetPosition] = useState<[number, number, number] | null>(null);
 
   // Filter out the Sun, render only planets
-  const planetsToRender = planets.filter((p) => p.type !== 'star');
+  const planetsToRender = planets.filter((p) => p.type !== "star");
 
   return (
     <>
@@ -22,6 +23,13 @@ function App() {
         <Suspense fallback={<SceneLoader />}>
           <Lights />
           <Sun />
+          {/* Orbit lines for all planets */}
+          {planetsToRender.map((planet) => (
+            <Orbit
+              key={`orbit-${planet.id}`}
+              radius={getOrbitRadius(planet.distanceFromSun, planet.id)}
+            />
+          ))}
           {planetsToRender.map((planet, index) => (
             <Planet
               key={planet.id}
@@ -29,13 +37,12 @@ function App() {
               index={index}
               onSelect={selectPlanet}
               isSelected={selectedPlanet?.id === planet.id}
-              onPlanetPosition={setSelectedPlanetPosition}
             />
           ))}
-          <SelectionRing planet={selectedPlanet} planetPosition={selectedPlanetPosition ?? undefined} />
         </Suspense>
       </SolarSystemCanvas>
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
+      <TimeControl />
     </>
   );
 }
