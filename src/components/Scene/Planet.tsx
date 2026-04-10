@@ -3,8 +3,13 @@ import { useFrame } from "@react-three/fiber";
 import { useTexture, Html } from "@react-three/drei";
 import { Mesh, Group } from "three";
 import type { Planet as PlanetType } from "../../types/planet";
+import { planets } from "../../data/planets";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 import { useSimulation } from "../../context/SimulationContext";
+
+// Preload all planet textures at module load time so they start downloading
+// before any Planet component mounts
+planets.forEach((p) => p.texture && useTexture.preload(p.texture));
 
 interface PlanetComponentProps {
   planet: PlanetType;

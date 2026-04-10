@@ -6,8 +6,10 @@ import { useSimulation } from "../../context/SimulationContext";
 
 const SUN_RADIUS = 35;
 const TEXTURE_PATH = "/textures/sun.jpg";
-
 const SUN_ROTATION_SPEED = 0.003;
+
+// Kick off texture download before the component mounts
+useTexture.preload(TEXTURE_PATH);
 
 const SunTexturedMesh = () => {
   const meshRef = useRef<Mesh>(null);
