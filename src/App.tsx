@@ -6,6 +6,7 @@ import { Planet } from "./components/Scene/Planet";
 import { Orbit } from "./components/Scene/Orbit";
 import { SceneLoader } from "./components/UI/LoadingScreen";
 import { Header } from "./components/UI/Header";
+import { Attribution } from "./components/UI/Attribution";
 
 const PlanetInfo = lazy(() =>
   import("./components/UI/PlanetInfo").then((m) => ({ default: m.PlanetInfo }))
@@ -74,6 +75,7 @@ function App() {
         <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
         <TimeControl />
       </Suspense>
+      <Attribution />
     </>
   );
 }
