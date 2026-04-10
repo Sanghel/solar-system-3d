@@ -89,20 +89,29 @@ const PlanetSelectionRing = ({ planet }: { planet: PlanetType }) => {
   );
 };
 
-/** Saturn's iconic ring system — RingGeometry tilted to match Saturn's appearance. */
+/** Saturn's iconic ring system — two ring layers for a banded look. */
 const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
-  const innerRadius = planetRadius * 1.3;
-  const outerRadius = planetRadius * 2.2;
+  // Outer ring (bright band)
+  const outerInner = planetRadius * 1.4;
+  const outerOuter = planetRadius * 2.2;
+  // Inner ring (narrower, slightly darker)
+  const innerInner = planetRadius * 1.1;
+  const innerOuter = planetRadius * 1.35;
+  // Tilt: ~27° from horizontal (matching Saturn's real axial tilt roughly)
+  const tilt: [number, number, number] = [Math.PI / 2 - 0.47, 0, 0];
   return (
-    <mesh rotation={[Math.PI / 2.5, 0, 0]}>
-      <ringGeometry args={[innerRadius, outerRadius, 64]} />
-      <meshBasicMaterial
-        color="#c2a96e"
-        transparent
-        opacity={0.75}
-        side={2}
-      />
-    </mesh>
+    <group rotation={tilt}>
+      {/* Main bright ring */}
+      <mesh>
+        <ringGeometry args={[outerInner, outerOuter, 128]} />
+        <meshBasicMaterial color="#d4b483" transparent opacity={0.82} side={2} />
+      </mesh>
+      {/* Inner darker gap ring */}
+      <mesh>
+        <ringGeometry args={[innerInner, innerOuter, 128]} />
+        <meshBasicMaterial color="#a89060" transparent opacity={0.55} side={2} />
+      </mesh>
+    </group>
   );
 };
 
@@ -114,7 +123,7 @@ export const Planet = ({
 }: PlanetComponentProps) => {
   const groupRef = useRef<Group>(null);
   const { timeScale } = useSimulation();
-  const orbitRadius = getOrbitRadius(planet.distanceFromSun);
+  const orbitRadius = getOrbitRadius(planet.distanceFromSun, planet.id);
   const initialAngle = (index * Math.PI * 2) / 8;
   const angleRef = useRef(initialAngle);
 
