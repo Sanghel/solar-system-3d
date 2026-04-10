@@ -39,8 +39,8 @@ const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) =
         map={texture}
         metalness={0.1}
         roughness={0.8}
-        emissive="#ffffff"
-        emissiveIntensity={isSelected ? 0.12 : 0}
+        emissiveMap={isSelected ? texture : undefined}
+        emissiveIntensity={isSelected ? 0.4 : 0}
       />
     </mesh>
   );
@@ -65,8 +65,8 @@ const PlanetFallbackMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) =
         color={planet.baseColor}
         metalness={0.3}
         roughness={0.7}
-        emissive="#ffffff"
-        emissiveIntensity={isSelected ? 0.12 : 0}
+        emissive={planet.baseColor}
+        emissiveIntensity={isSelected ? 0.4 : 0}
       />
     </mesh>
   );
