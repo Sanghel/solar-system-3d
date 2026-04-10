@@ -1,6 +1,10 @@
 # Solar System 3D
 
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://solar-system-3d-opal.vercel.app)
+
 An interactive 3D visualization of the Solar System built with React, Three.js, and Vite. Explore all 8 planets, learn their key data, and navigate through space with smooth camera animations.
+
+**Live demo:** https://solar-system-3d-opal.vercel.app
 
 ## Features
 
