@@ -12,9 +12,27 @@ interface CameraControllerProps {
   overviewTrigger: number;
 }
 
-/** Returns an appropriate camera distance based on the planet's visual size. */
-function getCameraDistance(relativeSize: number): number {
-  return relativeSize * 5 + 20;
+/**
+ * Calculates the lateral (X/Z) camera offset from the planet centre.
+ *
+ * Rules:
+ * - Base distance scales with the planet's visual radius so the planet fills
+ *   a consistent portion of the screen at the 75° FOV used by the canvas.
+ * - Saturn gets extra distance to keep its ring system (extends to 2.2×
+ *   relativeSize) fully in view.
+ * - A hard minimum of 30 world units prevents getting uncomfortably close
+ *   to small planets like Mercury or Mars.
+ */
+function getCameraOffset(planet: Planet): { lateral: number; vertical: number } {
+  const viewRadius =
+    planet.id === "saturn"
+      ? planet.relativeSize * 2.2 // outer ring radius
+      : planet.relativeSize;
+
+  const lateral = Math.max(viewRadius * 4.5 + 15, 30);
+  const vertical = planet.relativeSize * 1.5;
+
+  return { lateral, vertical };
 }
 
 /**
@@ -52,11 +70,11 @@ export function CameraController({
     const planetPos = new THREE.Vector3();
     planetMesh.getWorldPosition(planetPos);
 
-    const distance = getCameraDistance(selectedPlanet.relativeSize);
+    const { lateral, vertical } = getCameraOffset(selectedPlanet);
     const cameraPos = new THREE.Vector3(
-      planetPos.x + distance,
-      planetPos.y + selectedPlanet.relativeSize * 1.5,
-      planetPos.z + distance
+      planetPos.x + lateral,
+      planetPos.y + vertical,
+      planetPos.z + lateral
     );
 
     moveTo(cameraPos, planetPos.clone());
