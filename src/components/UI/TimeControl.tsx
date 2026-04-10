@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { useSimulation } from "../../context/SimulationContext";
 import "./TimeControl.css";
 
 const SPEED_STEPS = [0.1, 0.25, 0.5, 1, 2, 5, 10];
 
-export const TimeControl = () => {
+export const TimeControl = memo(() => {
   const { timeScale, setTimeScale, isPaused, togglePause } = useSimulation();
   const sliderIndex = useMemo(
     () => Math.max(0, SPEED_STEPS.indexOf(timeScale)),
@@ -39,4 +39,4 @@ export const TimeControl = () => {
       </div>
     </div>
   );
-};
+});

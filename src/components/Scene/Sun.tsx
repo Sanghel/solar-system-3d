@@ -1,4 +1,4 @@
-import { useRef, Suspense } from "react";
+import { useRef, Suspense, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { Mesh } from "three";
@@ -6,8 +6,10 @@ import { useSimulation } from "../../context/SimulationContext";
 
 const SUN_RADIUS = 35;
 const TEXTURE_PATH = "/textures/sun.jpg";
-
 const SUN_ROTATION_SPEED = 0.003;
+
+// Kick off texture download before the component mounts
+useTexture.preload(TEXTURE_PATH);
 
 const SunTexturedMesh = () => {
   const meshRef = useRef<Mesh>(null);
@@ -41,8 +43,8 @@ const SunFallbackMesh = () => (
   </mesh>
 );
 
-export const Sun = () => (
+export const Sun = memo(() => (
   <Suspense fallback={<SunFallbackMesh />}>
     <SunTexturedMesh />
   </Suspense>
-);
+));

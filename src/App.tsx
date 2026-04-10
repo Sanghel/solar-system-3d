@@ -1,14 +1,21 @@
-import { Suspense, useState } from "react";
+import { Suspense, useState, useCallback, useMemo, lazy } from "react";
 import { SolarSystemCanvas } from "./components/Scene/SolarSystemCanvas";
 import { Lights } from "./components/Scene/Lights";
 import { Sun } from "./components/Scene/Sun";
 import { Planet } from "./components/Scene/Planet";
 import { Orbit } from "./components/Scene/Orbit";
-import { PlanetInfo } from "./components/UI/PlanetInfo";
-import { PlanetNavigation } from "./components/UI/PlanetNavigation";
 import { SceneLoader } from "./components/UI/LoadingScreen";
-import { TimeControl } from "./components/UI/TimeControl";
 import { Header } from "./components/UI/Header";
+
+const PlanetInfo = lazy(() =>
+  import("./components/UI/PlanetInfo").then((m) => ({ default: m.PlanetInfo }))
+);
+const PlanetNavigation = lazy(() =>
+  import("./components/UI/PlanetNavigation").then((m) => ({ default: m.PlanetNavigation }))
+);
+const TimeControl = lazy(() =>
+  import("./components/UI/TimeControl").then((m) => ({ default: m.TimeControl }))
+);
 import { planets } from "./data/planets";
 import { usePlanetSelection } from "./hooks/usePlanetSelection";
 import { getOrbitRadius } from "./utils/orbitUtils";
@@ -17,13 +24,15 @@ function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
   const [overviewTrigger, setOverviewTrigger] = useState(0);
 
-  // Filter out the Sun, render only planets
-  const planetsToRender = planets.filter((p) => p.type !== "star");
+  const planetsToRender = useMemo(
+    () => planets.filter((p) => p.type !== "star"),
+    []
+  );
 
-  const handleOverview = () => {
+  const handleOverview = useCallback(() => {
     deselectPlanet();
     setOverviewTrigger((t) => t + 1);
-  };
+  }, [deselectPlanet]);
 
   return (
     <>
@@ -55,14 +64,16 @@ function App() {
       </SolarSystemCanvas>
 
       <Header />
-      <PlanetNavigation
-        planets={planetsToRender}
-        selectedPlanet={selectedPlanet}
-        onSelectPlanet={selectPlanet}
-        onOverview={handleOverview}
-      />
-      <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
-      <TimeControl />
+      <Suspense fallback={null}>
+        <PlanetNavigation
+          planets={planetsToRender}
+          selectedPlanet={selectedPlanet}
+          onSelectPlanet={selectPlanet}
+          onOverview={handleOverview}
+        />
+        <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
+        <TimeControl />
+      </Suspense>
     </>
   );
 }

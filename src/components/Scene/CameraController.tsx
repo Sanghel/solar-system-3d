@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useCameraAnimation } from "../../hooks/useCameraAnimation";
 import type { Planet } from "../../types/planet";
@@ -67,11 +67,11 @@ export function CameraController({
     const planetMesh = scene.getObjectByName(selectedPlanet.id);
     if (!planetMesh) return;
 
-    const planetPos = new THREE.Vector3();
+    const planetPos = new Vector3();
     planetMesh.getWorldPosition(planetPos);
 
     const { lateral, vertical } = getCameraOffset(selectedPlanet);
-    const cameraPos = new THREE.Vector3(
+    const cameraPos = new Vector3(
       planetPos.x + lateral,
       planetPos.y + vertical,
       planetPos.z + lateral

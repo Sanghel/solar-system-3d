@@ -1,10 +1,15 @@
-import { useRef, Suspense, useState } from "react";
+import { useRef, Suspense, useState, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture, Html } from "@react-three/drei";
 import { Mesh, Group } from "three";
 import type { Planet as PlanetType } from "../../types/planet";
+import { planets } from "../../data/planets";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 import { useSimulation } from "../../context/SimulationContext";
+
+// Preload all planet textures at module load time so they start downloading
+// before any Planet component mounts
+planets.forEach((p) => p.texture && useTexture.preload(p.texture));
 
 interface PlanetComponentProps {
   planet: PlanetType;
@@ -21,7 +26,12 @@ interface PlanetMeshProps {
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({
+  planet,
+  isSelected,
+  onSelect,
+  onHover,
+}: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
   const { timeScale } = useSimulation();
@@ -38,23 +48,30 @@ const PlanetTexturedMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
       ref={meshRef}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
-      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; onHover?.(true); }}
-      onPointerLeave={() => { document.body.style.cursor = "auto"; onHover?.(false); }}
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = "pointer";
+        onHover?.(true);
+      }}
+      onPointerLeave={() => {
+        document.body.style.cursor = "auto";
+        onHover?.(false);
+      }}
     >
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
         map={texture}
         metalness={0.1}
-        roughness={0.8}
-        emissiveMap={isSelected ? texture : undefined}
-        emissiveIntensity={isSelected ? 0.4 : 0}
+        roughness={0.6}
+        emissive={isSelected ? planet.baseColor : "#000000"}
+        emissiveIntensity={0}
       />
     </mesh>
   );
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, onSelect, onHover }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const { timeScale } = useSimulation();
 
@@ -70,16 +87,23 @@ const PlanetFallbackMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
       ref={meshRef}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
-      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; onHover?.(true); }}
-      onPointerLeave={() => { document.body.style.cursor = "auto"; onHover?.(false); }}
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = "pointer";
+        onHover?.(true);
+      }}
+      onPointerLeave={() => {
+        document.body.style.cursor = "auto";
+        onHover?.(false);
+      }}
     >
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
         color={planet.baseColor}
         metalness={0.3}
-        roughness={0.7}
+        roughness={0.6}
         emissive={planet.baseColor}
-        emissiveIntensity={isSelected ? 0.4 : 0}
+        emissiveIntensity={0}
       />
     </mesh>
   );
@@ -89,7 +113,7 @@ const PlanetFallbackMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
  * Small downward-pointing arrow above the selected planet.
  * Bobs gently up and down to draw attention without overwhelming the scene.
  */
-const SelectionArrow = ({ planet }: { planet: PlanetType }) => {
+const SelectionArrow = memo(({ planet }: { planet: PlanetType }) => {
   const groupRef = useRef<Group>(null);
   const coneRadius = Math.max(planet.relativeSize * 0.18, 0.8);
   const coneHeight = coneRadius * 2.2;
@@ -113,10 +137,10 @@ const SelectionArrow = ({ planet }: { planet: PlanetType }) => {
       </mesh>
     </group>
   );
-};
+});
 
 /** Saturn's iconic ring system — two ring layers for a banded look. */
-const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
+const SaturnRing = memo(({ planetRadius }: { planetRadius: number }) => {
   const outerInner = planetRadius * 1.4;
   const outerOuter = planetRadius * 2.2;
   const innerInner = planetRadius * 1.1;
@@ -144,10 +168,10 @@ const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
       </mesh>
     </group>
   );
-};
+});
 
 /** Tooltip shown on hover above the planet. */
-const PlanetTooltip = ({ planet }: { planet: PlanetType }) => (
+const PlanetTooltip = memo(({ planet }: { planet: PlanetType }) => (
   <Html
     center
     position={[0, planet.relativeSize + 1.8, 0]}
@@ -166,56 +190,72 @@ const PlanetTooltip = ({ planet }: { planet: PlanetType }) => (
         userSelect: "none",
       }}
     >
-      <div style={{ color: planet.baseColor, fontWeight: 700, fontSize: "13px", letterSpacing: "0.04em" }}>
+      <div
+        style={{
+          color: planet.baseColor,
+          fontWeight: 700,
+          fontSize: "13px",
+          letterSpacing: "0.04em",
+        }}
+      >
         {planet.name}
       </div>
-      <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "11px", fontFamily: "monospace", marginTop: "2px" }}>
+      <div
+        style={{
+          color: "rgba(255,255,255,0.55)",
+          fontSize: "11px",
+          fontFamily: "monospace",
+          marginTop: "2px",
+        }}
+      >
         ⌀ {planet.diameter.toLocaleString()} km
       </div>
     </div>
   </Html>
+));
+
+export const Planet = memo(
+  ({ planet, index, onSelect, isSelected }: PlanetComponentProps) => {
+    const groupRef = useRef<Group>(null);
+    const { timeScale } = useSimulation();
+    const orbitRadius = getOrbitRadius(planet.distanceFromSun, planet.id);
+    const initialAngle = (index * Math.PI * 2) / 8;
+    const angleRef = useRef(initialAngle);
+    const [hovered, setHovered] = useState(false);
+
+    useFrame((_, delta) => {
+      angleRef.current += planet.orbitSpeed * timeScale * delta * 60;
+      if (groupRef.current) {
+        groupRef.current.position.set(
+          orbitRadius * Math.cos(angleRef.current),
+          0,
+          orbitRadius * Math.sin(angleRef.current),
+        );
+      }
+    });
+
+    const meshProps: PlanetMeshProps = {
+      planet,
+      isSelected,
+      onSelect,
+      onHover: setHovered,
+    };
+
+    return (
+      <group ref={groupRef}>
+        {planet.texture ? (
+          <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
+            <PlanetTexturedMesh {...meshProps} />
+          </Suspense>
+        ) : (
+          <PlanetFallbackMesh {...meshProps} />
+        )}
+        {planet.id === "saturn" && (
+          <SaturnRing planetRadius={planet.relativeSize} />
+        )}
+        {isSelected && <SelectionArrow planet={planet} />}
+        {hovered && !isSelected && <PlanetTooltip planet={planet} />}
+      </group>
+    );
+  },
 );
-
-export const Planet = ({
-  planet,
-  index,
-  onSelect,
-  isSelected,
-}: PlanetComponentProps) => {
-  const groupRef = useRef<Group>(null);
-  const { timeScale } = useSimulation();
-  const orbitRadius = getOrbitRadius(planet.distanceFromSun, planet.id);
-  const initialAngle = (index * Math.PI * 2) / 8;
-  const angleRef = useRef(initialAngle);
-  const [hovered, setHovered] = useState(false);
-
-  useFrame((_, delta) => {
-    angleRef.current += planet.orbitSpeed * timeScale * delta * 60;
-    if (groupRef.current) {
-      groupRef.current.position.set(
-        orbitRadius * Math.cos(angleRef.current),
-        0,
-        orbitRadius * Math.sin(angleRef.current),
-      );
-    }
-  });
-
-  const meshProps: PlanetMeshProps = { planet, isSelected, onSelect, onHover: setHovered };
-
-  return (
-    <group ref={groupRef}>
-      {planet.texture ? (
-        <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
-          <PlanetTexturedMesh {...meshProps} />
-        </Suspense>
-      ) : (
-        <PlanetFallbackMesh {...meshProps} />
-      )}
-      {planet.id === "saturn" && (
-        <SaturnRing planetRadius={planet.relativeSize} />
-      )}
-      {isSelected && <SelectionArrow planet={planet} />}
-      {hovered && !isSelected && <PlanetTooltip planet={planet} />}
-    </group>
-  );
-};

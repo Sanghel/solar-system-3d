@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Line } from "@react-three/drei";
 import type { Vector3 } from "@react-three/fiber";
 
@@ -12,7 +12,7 @@ interface OrbitProps {
 /**
  * Renders a circular orbit line around the Sun at y=0.
  */
-export const Orbit = ({
+export const Orbit = memo(({
   radius,
   segments = 128,
   color = "#ffffff",
@@ -34,4 +34,4 @@ export const Orbit = ({
       opacity={opacity}
     />
   );
-};
+});
