@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import './Header.css';
 
 /**
  * Header Component
  * Fixed top bar with application title and minimal branding.
  */
-export const Header = () => (
+export const Header = memo(() => (
   <header className="app-header" role="banner">
     <div className="app-header__inner">
       <div className="app-header__brand">
@@ -14,4 +15,4 @@ export const Header = () => (
       <span className="app-header__tagline">Interactive 3D Simulation</span>
     </div>
   </header>
-);
+));

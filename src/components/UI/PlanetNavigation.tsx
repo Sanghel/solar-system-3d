@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Planet } from "../../types/planet";
 import "./PlanetNavigation.css";
 
@@ -13,7 +14,7 @@ interface PlanetNavigationProps {
  * Shows a color dot per planet, highlights the active one, and displays
  * the current planet name as a header label when something is selected.
  */
-export const PlanetNavigation = ({
+export const PlanetNavigation = memo(({
   planets,
   selectedPlanet,
   onSelectPlanet,
@@ -80,4 +81,4 @@ export const PlanetNavigation = ({
       </div>
     </nav>
   );
-};
+});
