@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { SolarSystemCanvas } from "./components/Scene/SolarSystemCanvas";
 import { Lights } from "./components/Scene/Lights";
 import { Sun } from "./components/Scene/Sun";
@@ -14,15 +14,22 @@ import { getOrbitRadius } from "./utils/orbitUtils";
 
 function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
+  const [overviewTrigger, setOverviewTrigger] = useState(0);
 
   // Filter out the Sun, render only planets
   const planetsToRender = planets.filter((p) => p.type !== "star");
+
+  const handleOverview = () => {
+    deselectPlanet();
+    setOverviewTrigger((t) => t + 1);
+  };
 
   return (
     <>
       <SolarSystemCanvas
         onBackgroundClick={deselectPlanet}
         selectedPlanet={selectedPlanet}
+        overviewTrigger={overviewTrigger}
       >
         <Suspense fallback={<SceneLoader />}>
           <Lights />
@@ -50,7 +57,7 @@ function App() {
         planets={planetsToRender}
         selectedPlanet={selectedPlanet}
         onSelectPlanet={selectPlanet}
-        onOverview={deselectPlanet}
+        onOverview={handleOverview}
       />
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
       <TimeControl />
