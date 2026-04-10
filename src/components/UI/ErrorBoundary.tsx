@@ -28,6 +28,8 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div
+          role="alert"
+          aria-live="assertive"
           style={{
             position: "fixed",
             inset: 0,
