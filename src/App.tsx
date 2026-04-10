@@ -5,6 +5,7 @@ import { Sun } from "./components/Scene/Sun";
 import { Planet } from "./components/Scene/Planet";
 import { Orbit } from "./components/Scene/Orbit";
 import { PlanetInfo } from "./components/UI/PlanetInfo";
+import { PlanetNavigation } from "./components/UI/PlanetNavigation";
 import { SceneLoader } from "./components/UI/LoadingScreen";
 import { TimeControl } from "./components/UI/TimeControl";
 import { planets } from "./data/planets";
@@ -19,7 +20,10 @@ function App() {
 
   return (
     <>
-      <SolarSystemCanvas onBackgroundClick={deselectPlanet} selectedPlanet={selectedPlanet}>
+      <SolarSystemCanvas
+        onBackgroundClick={deselectPlanet}
+        selectedPlanet={selectedPlanet}
+      >
         <Suspense fallback={<SceneLoader />}>
           <Lights />
           <Sun />
@@ -41,6 +45,13 @@ function App() {
           ))}
         </Suspense>
       </SolarSystemCanvas>
+
+      <PlanetNavigation
+        planets={planetsToRender}
+        selectedPlanet={selectedPlanet}
+        onSelectPlanet={selectPlanet}
+        onOverview={deselectPlanet}
+      />
       <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
       <TimeControl />
     </>
