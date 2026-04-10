@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
@@ -8,43 +8,69 @@ export const INITIAL_CAMERA_POSITION = new THREE.Vector3(0, 50, 100);
 export const INITIAL_LOOK_AT = new THREE.Vector3(0, 0, 0);
 
 /** Lerp factor controlling animation smoothness (higher = faster). */
-export const CAMERA_LERP_FACTOR = 0.05;
+const CAMERA_LERP_FACTOR = 0.05;
 
-/** Distance threshold in world units to consider animation complete. */
-export const ARRIVAL_THRESHOLD = 0.5;
+/** Distance threshold in world units to consider the animation complete. */
+const ARRIVAL_THRESHOLD = 0.5;
 
 export interface UseCameraAnimationReturn {
   isAnimating: boolean;
   moveTo: (position: THREE.Vector3, lookAt: THREE.Vector3) => void;
   resetView: () => void;
-  /** Internal refs used by CameraController's useFrame to drive animation. */
-  _internal: {
-    targetPositionRef: React.RefObject<THREE.Vector3 | null>;
-    targetLookAtRef: React.RefObject<THREE.Vector3 | null>;
-    currentLookAtRef: React.RefObject<THREE.Vector3>;
-    setIsAnimating: React.Dispatch<React.SetStateAction<boolean>>;
-  };
 }
 
 /**
- * Manages camera animation state and control functions.
+ * Manages smooth camera animation via lerp inside a React Three Fiber Canvas.
  * Must be used inside a component that is a child of <Canvas>.
  *
- * Animation is driven by CameraController via useFrame (task 7.2).
+ * Each frame it lerps the camera position and lookAt toward the current target.
+ * OrbitControls are disabled during animation and re-enabled (with an updated
+ * target) once the camera arrives.
  */
 export function useCameraAnimation(
   controlsRef: React.RefObject<OrbitControlsImpl | null>
 ): UseCameraAnimationReturn {
-  useThree(); // ensure we're inside Canvas context
+  const { camera } = useThree();
 
   const [isAnimating, setIsAnimating] = useState(false);
 
-  /** Where the camera should move to. */
+  /** Where the camera should move to (null = no active animation). */
   const targetPositionRef = useRef<THREE.Vector3 | null>(null);
-  /** Where the camera should look at when it arrives. */
+  /** Where the camera should point when it arrives. */
   const targetLookAtRef = useRef<THREE.Vector3 | null>(null);
-  /** Current interpolated lookAt — lerped each frame during animation. */
+  /** Current interpolated lookAt — updated each frame during animation. */
   const currentLookAtRef = useRef<THREE.Vector3>(INITIAL_LOOK_AT.clone());
+
+  useFrame(() => {
+    if (!targetPositionRef.current || !targetLookAtRef.current) return;
+
+    const distToTarget = camera.position.distanceTo(targetPositionRef.current);
+
+    if (distToTarget < ARRIVAL_THRESHOLD) {
+      // Snap to exact target and finish animation
+      camera.position.copy(targetPositionRef.current);
+      currentLookAtRef.current.copy(targetLookAtRef.current);
+      camera.lookAt(currentLookAtRef.current);
+
+      if (controlsRef.current) {
+        controlsRef.current.target.copy(targetLookAtRef.current);
+        controlsRef.current.enabled = true;
+        controlsRef.current.update();
+      }
+
+      targetPositionRef.current = null;
+      targetLookAtRef.current = null;
+      setIsAnimating(false);
+      return;
+    }
+
+    // Lerp camera position toward target
+    camera.position.lerp(targetPositionRef.current, CAMERA_LERP_FACTOR);
+
+    // Lerp lookAt and apply to camera
+    currentLookAtRef.current.lerp(targetLookAtRef.current, CAMERA_LERP_FACTOR);
+    camera.lookAt(currentLookAtRef.current);
+  });
 
   const moveTo = useCallback(
     (position: THREE.Vector3, lookAt: THREE.Vector3) => {
@@ -65,15 +91,5 @@ export function useCameraAnimation(
     moveTo(INITIAL_CAMERA_POSITION.clone(), INITIAL_LOOK_AT.clone());
   }, [moveTo]);
 
-  return {
-    isAnimating,
-    moveTo,
-    resetView,
-    _internal: {
-      targetPositionRef,
-      targetLookAtRef,
-      currentLookAtRef,
-      setIsAnimating,
-    },
-  };
+  return { isAnimating, moveTo, resetView };
 }
