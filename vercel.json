@@ -5,5 +5,9 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "github": {
+    "autoAlias": true,
+    "autoJobCancelation": true
+  }
 }
