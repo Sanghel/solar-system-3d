@@ -72,6 +72,9 @@ function App() {
           onSelectPlanet={selectPlanet}
           onOverview={handleOverview}
         />
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {selectedPlanet ? `Viewing ${selectedPlanet.name}` : "Overview — all planets"}
+        </div>
         <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
         <TimeControl />
       </Suspense>
