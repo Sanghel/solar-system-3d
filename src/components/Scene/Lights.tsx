@@ -1,4 +1,6 @@
-export const Lights = () => {
+import { memo } from "react";
+
+export const Lights = memo(() => {
   return (
     <>
       {/* Ambient light — raised so dark sides of all planets are visible */}
@@ -32,4 +34,4 @@ export const Lights = () => {
       />
     </>
   );
-};
+});
