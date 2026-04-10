@@ -87,3 +87,20 @@
   min-width: 36px;
   text-align: right;
 }
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .time-control {
+    bottom: var(--space-4);
+    padding: 8px var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .time-control__slider {
+    width: 80px;
+  }
+
+  .time-control__label {
+    display: none;
+  }
+}
