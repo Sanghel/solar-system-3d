@@ -1,11 +1,12 @@
 /* ============================================================
-   Attribution — bottom-center signature badge
-   pointer-events: none so the 3D scene stays interactive
+   Attribution — top-center signature badge
+   Sits in the center gap of the Header (brand left, tagline right).
+   pointer-events: none so the 3D scene stays interactive.
    ============================================================ */
 
 .attribution {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
   right: 0;
   z-index: var(--z-ui);
@@ -13,13 +14,14 @@
 
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-start;
 
-  padding-bottom: var(--space-5);
+  /* Match the Header's vertical padding so the text aligns with the brand/tagline */
+  padding-top: var(--space-4);
 
-  /* Gradient veil — fades the bottom edge of the canvas */
+  /* Gradient veil — fades the top edge of the canvas */
   background: linear-gradient(
-    to top,
+    to bottom,
     rgba(0, 0, 0, 0.52) 0%,
     rgba(0, 0, 0, 0.18) 55%,
     transparent 100%
@@ -32,7 +34,7 @@
 @keyframes attribution-appear {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(-6px);
   }
   to {
     opacity: 1;
@@ -114,10 +116,6 @@
 /* ── Mobile ── */
 
 @media (max-width: 480px) {
-  .attribution {
-    padding-bottom: var(--space-4);
-  }
-
   .attribution__text {
     font-size: 10px;
     gap: 4px;
