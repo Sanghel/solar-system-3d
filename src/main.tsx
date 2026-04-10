@@ -4,11 +4,14 @@ import './index.css'
 import './styles/global.css'
 import App from './App.tsx'
 import { SimulationProvider } from './context/SimulationContext.tsx'
+import { ErrorBoundary } from './components/UI/ErrorBoundary.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <SimulationProvider>
-      <App />
-    </SimulationProvider>
+    <ErrorBoundary>
+      <SimulationProvider>
+        <App />
+      </SimulationProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )
