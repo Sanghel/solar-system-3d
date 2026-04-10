@@ -25,7 +25,7 @@ function App() {
           <Sun />
           {/* Orbit lines for all planets */}
           {planetsToRender.map((planet) => (
-            <Orbit key={`orbit-${planet.id}`} radius={getOrbitRadius(planet.distanceFromSun)} />
+            <Orbit key={`orbit-${planet.id}`} radius={getOrbitRadius(planet.distanceFromSun, planet.id)} />
           ))}
           {planetsToRender.map((planet, index) => (
             <Planet
