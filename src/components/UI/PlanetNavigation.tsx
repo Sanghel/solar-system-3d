@@ -10,7 +10,8 @@ interface PlanetNavigationProps {
 
 /**
  * Quick-navigation panel listing all planets as clickable buttons.
- * Each button shows a color dot matching the planet's base color.
+ * Shows a color dot per planet, highlights the active one, and displays
+ * the current planet name as a header label when something is selected.
  */
 export const PlanetNavigation = ({
   planets,
@@ -20,10 +21,30 @@ export const PlanetNavigation = ({
 }: PlanetNavigationProps) => {
   return (
     <nav className="planet-nav" aria-label="Planet navigation">
+      {/* Current planet label */}
+      <div className="planet-nav__current">
+        {selectedPlanet ? (
+          <>
+            <span
+              className="planet-nav__current-dot"
+              style={{ background: selectedPlanet.baseColor }}
+            />
+            <span className="planet-nav__current-name">
+              {selectedPlanet.name}
+            </span>
+          </>
+        ) : (
+          <span className="planet-nav__current-name planet-nav__current-name--dim">
+            Solar System
+          </span>
+        )}
+      </div>
+
       <button
-        className="planet-nav__overview"
+        className={`planet-nav__overview${!selectedPlanet ? " planet-nav__overview--active" : ""}`}
         onClick={onOverview}
         aria-label="Overview — show all planets"
+        aria-pressed={!selectedPlanet}
       >
         ☀ Overview
       </button>
@@ -38,12 +59,21 @@ export const PlanetNavigation = ({
               onClick={() => onSelectPlanet(planet)}
               aria-pressed={isActive}
               aria-label={`Navigate to ${planet.name}`}
+              style={
+                isActive
+                  ? ({ "--planet-color": planet.baseColor } as React.CSSProperties)
+                  : undefined
+              }
             >
               <span
-                className="planet-nav__dot"
+                className={`planet-nav__dot${isActive ? " planet-nav__dot--active" : ""}`}
                 style={{ background: planet.baseColor }}
               />
-              <span className="planet-nav__name">{planet.name}</span>
+              <span
+                className={`planet-nav__name${isActive ? " planet-nav__name--active" : ""}`}
+              >
+                {planet.name}
+              </span>
             </button>
           );
         })}
