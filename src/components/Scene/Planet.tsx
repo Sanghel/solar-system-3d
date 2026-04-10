@@ -20,23 +20,24 @@ interface PlanetMeshProps {
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({
+  planet,
+  isSelected,
+  onSelect,
+}: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
   const { timeScale } = useSimulation();
 
   useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += planet.rotationSpeed * timeScale * delta * 60;
+      meshRef.current.rotation.y +=
+        planet.rotationSpeed * timeScale * delta * 60;
     }
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      name={planet.id}
-      onClick={() => onSelect?.(planet)}
-    >
+    <mesh ref={meshRef} name={planet.id} onClick={() => onSelect?.(planet)}>
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
         map={texture}
@@ -50,22 +51,23 @@ const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) =
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({
+  planet,
+  isSelected,
+  onSelect,
+}: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const { timeScale } = useSimulation();
 
   useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += planet.rotationSpeed * timeScale * delta * 60;
+      meshRef.current.rotation.y +=
+        planet.rotationSpeed * timeScale * delta * 60;
     }
   });
 
   return (
-    <mesh
-      ref={meshRef}
-      name={planet.id}
-      onClick={() => onSelect?.(planet)}
-    >
+    <mesh ref={meshRef} name={planet.id} onClick={() => onSelect?.(planet)}>
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
         color={planet.baseColor}
@@ -104,12 +106,22 @@ const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
       {/* Main bright ring */}
       <mesh>
         <ringGeometry args={[outerInner, outerOuter, 128]} />
-        <meshBasicMaterial color="#d4b483" transparent opacity={0.82} side={2} />
+        <meshBasicMaterial
+          color="#d4b483"
+          transparent
+          opacity={0.82}
+          side={2}
+        />
       </mesh>
       {/* Inner darker gap ring */}
       <mesh>
         <ringGeometry args={[innerInner, innerOuter, 128]} />
-        <meshBasicMaterial color="#a89060" transparent opacity={0.55} side={2} />
+        <meshBasicMaterial
+          color="#a89060"
+          transparent
+          opacity={0.55}
+          side={2}
+        />
       </mesh>
     </group>
   );
@@ -133,7 +145,7 @@ export const Planet = ({
       groupRef.current.position.set(
         orbitRadius * Math.cos(angleRef.current),
         0,
-        orbitRadius * Math.sin(angleRef.current)
+        orbitRadius * Math.sin(angleRef.current),
       );
     }
   });
@@ -149,7 +161,9 @@ export const Planet = ({
       ) : (
         <PlanetFallbackMesh {...meshProps} />
       )}
-      {planet.id === "saturn" && <SaturnRing planetRadius={planet.relativeSize} />}
+      {planet.id === "saturn" && (
+        <SaturnRing planetRadius={planet.relativeSize} />
+      )}
       {isSelected && <PlanetSelectionRing planet={planet} />}
     </group>
   );
