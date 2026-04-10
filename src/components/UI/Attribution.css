@@ -1,0 +1,125 @@
+/* ============================================================
+   Attribution — bottom-center signature badge
+   pointer-events: none so the 3D scene stays interactive
+   ============================================================ */
+
+.attribution {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-ui);
+  pointer-events: none;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  padding-bottom: var(--space-5);
+
+  /* Gradient veil — fades the bottom edge of the canvas */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.52) 0%,
+    rgba(0, 0, 0, 0.18) 55%,
+    transparent 100%
+  );
+
+  /* Fade in once the page loads */
+  animation: attribution-appear 1.8s ease 0.8s both;
+}
+
+@keyframes attribution-appear {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Text row ── */
+
+.attribution__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  font-size: var(--text-xs);
+  font-family: var(--font-sans);
+  letter-spacing: 0.055em;
+  font-style: italic;
+
+  color: rgba(255, 255, 255, 0.38);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+
+  margin: 0;
+  line-height: 1;
+}
+
+/* ── Heart ── */
+
+.attribution__heart {
+  font-style: normal;
+  font-size: 10px;
+  line-height: 1;
+  color: #e8607a;
+  display: inline-flex;
+  align-items: center;
+
+  filter: drop-shadow(0 0 4px rgba(232, 96, 122, 0.55));
+  animation: heartbeat 2.6s ease-in-out 2s infinite;
+  will-change: transform;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% { transform: scale(1); }
+  8%   { transform: scale(1.32); }
+  18%  { transform: scale(1); }
+  26%  { transform: scale(1.22); }
+  36%  { transform: scale(1); }
+}
+
+/* ── Three.js logo ── */
+
+.attribution__logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.attribution__logo {
+  width: 13px;
+  height: 12px;
+  color: #ff7433;
+  vertical-align: middle;
+
+  filter: drop-shadow(0 0 3px rgba(255, 116, 51, 0.6));
+  transition: filter var(--transition-slow), transform var(--transition-slow);
+}
+
+/* ── Author name ── */
+
+.attribution__author {
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.58);
+  white-space: nowrap;
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 480px) {
+  .attribution {
+    padding-bottom: var(--space-4);
+  }
+
+  .attribution__text {
+    font-size: 10px;
+    gap: 4px;
+  }
+}
