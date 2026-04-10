@@ -1,4 +1,4 @@
-import { useRef, Suspense, useState } from "react";
+import { useRef, Suspense, useState, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture, Html } from "@react-three/drei";
 import { Mesh, Group } from "three";
@@ -89,7 +89,7 @@ const PlanetFallbackMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
  * Small downward-pointing arrow above the selected planet.
  * Bobs gently up and down to draw attention without overwhelming the scene.
  */
-const SelectionArrow = ({ planet }: { planet: PlanetType }) => {
+const SelectionArrow = memo(({ planet }: { planet: PlanetType }) => {
   const groupRef = useRef<Group>(null);
   const coneRadius = Math.max(planet.relativeSize * 0.18, 0.8);
   const coneHeight = coneRadius * 2.2;
@@ -113,10 +113,10 @@ const SelectionArrow = ({ planet }: { planet: PlanetType }) => {
       </mesh>
     </group>
   );
-};
+});
 
 /** Saturn's iconic ring system — two ring layers for a banded look. */
-const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
+const SaturnRing = memo(({ planetRadius }: { planetRadius: number }) => {
   const outerInner = planetRadius * 1.4;
   const outerOuter = planetRadius * 2.2;
   const innerInner = planetRadius * 1.1;
@@ -144,10 +144,10 @@ const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
       </mesh>
     </group>
   );
-};
+});
 
 /** Tooltip shown on hover above the planet. */
-const PlanetTooltip = ({ planet }: { planet: PlanetType }) => (
+const PlanetTooltip = memo(({ planet }: { planet: PlanetType }) => (
   <Html
     center
     position={[0, planet.relativeSize + 1.8, 0]}
@@ -174,9 +174,9 @@ const PlanetTooltip = ({ planet }: { planet: PlanetType }) => (
       </div>
     </div>
   </Html>
-);
+));
 
-export const Planet = ({
+export const Planet = memo(({
   planet,
   index,
   onSelect,
@@ -218,4 +218,4 @@ export const Planet = ({
       {hovered && !isSelected && <PlanetTooltip planet={planet} />}
     </group>
   );
-};
+});

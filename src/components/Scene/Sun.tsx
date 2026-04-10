@@ -1,4 +1,4 @@
-import { useRef, Suspense } from "react";
+import { useRef, Suspense, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { Mesh } from "three";
@@ -41,8 +41,8 @@ const SunFallbackMesh = () => (
   </mesh>
 );
 
-export const Sun = () => (
+export const Sun = memo(() => (
   <Suspense fallback={<SunFallbackMesh />}>
     <SunTexturedMesh />
   </Suspense>
-);
+));

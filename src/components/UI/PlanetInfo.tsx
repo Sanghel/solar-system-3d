@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Planet } from '../../types/planet';
 import './PlanetInfo.css';
 
@@ -28,7 +29,7 @@ const TYPE_ICONS: Record<Planet['type'], string> = {
  * PlanetInfo Component
  * Displays detailed information about a selected planet in a slide-out panel.
  */
-export const PlanetInfo = ({ planet, onClose }: PlanetInfoProps) => {
+export const PlanetInfo = memo(({ planet, onClose }: PlanetInfoProps) => {
   if (!planet) return null;
 
   const typeLabel = TYPE_LABELS[planet.type] ?? planet.type;
@@ -109,4 +110,4 @@ export const PlanetInfo = ({ planet, onClose }: PlanetInfoProps) => {
       </div>
     </div>
   );
-};
+});
