@@ -1,11 +1,11 @@
 import { useRef, useState, useCallback } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import * as THREE from "three";
+import { Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 /** Initial camera position matching the Canvas camera setup. */
-export const INITIAL_CAMERA_POSITION = new THREE.Vector3(0, 50, 100);
-export const INITIAL_LOOK_AT = new THREE.Vector3(0, 0, 0);
+export const INITIAL_CAMERA_POSITION = new Vector3(0, 50, 100);
+export const INITIAL_LOOK_AT = new Vector3(0, 0, 0);
 
 /** Original OrbitControls distance bounds (match SolarSystemCanvas defaults). */
 const DEFAULT_MIN_DISTANCE = 50;
@@ -29,8 +29,8 @@ export interface MoveToOptions {
 export interface UseCameraAnimationReturn {
   isAnimating: boolean;
   moveTo: (
-    position: THREE.Vector3,
-    lookAt: THREE.Vector3,
+    position: Vector3,
+    lookAt: Vector3,
     options?: MoveToOptions
   ) => void;
   resetView: () => void;
@@ -54,13 +54,13 @@ export function useCameraAnimation(
 
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const targetPositionRef = useRef<THREE.Vector3 | null>(null);
-  const targetLookAtRef = useRef<THREE.Vector3 | null>(null);
-  const currentLookAtRef = useRef<THREE.Vector3>(INITIAL_LOOK_AT.clone());
+  const targetPositionRef = useRef<Vector3 | null>(null);
+  const targetLookAtRef = useRef<Vector3 | null>(null);
+  const currentLookAtRef = useRef<Vector3>(INITIAL_LOOK_AT.clone());
 
   // Snapshot of camera state at the moment each animation begins
-  const startPositionRef = useRef<THREE.Vector3>(INITIAL_CAMERA_POSITION.clone());
-  const startLookAtRef = useRef<THREE.Vector3>(INITIAL_LOOK_AT.clone());
+  const startPositionRef = useRef<Vector3>(INITIAL_CAMERA_POSITION.clone());
+  const startLookAtRef = useRef<Vector3>(INITIAL_LOOK_AT.clone());
   const animStartTimeRef = useRef<number | null>(null);
 
   // Bounds to apply once controls re-enable after animation
@@ -117,8 +117,8 @@ export function useCameraAnimation(
 
   const moveTo = useCallback(
     (
-      position: THREE.Vector3,
-      lookAt: THREE.Vector3,
+      position: Vector3,
+      lookAt: Vector3,
       options: MoveToOptions = {}
     ) => {
       targetPositionRef.current = position.clone();
