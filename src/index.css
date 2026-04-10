@@ -8,10 +8,10 @@ html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #000;
+  background: var(--color-bg, #000);
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  color: #ffffff;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif);
+  color: var(--color-white, #ffffff);
 }
