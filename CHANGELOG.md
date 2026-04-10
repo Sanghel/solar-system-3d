@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.11.0] — 2026-04-10 — Deploy en Vercel
+
+### Added
+- `vercel.json` configuration file for Vercel deployment (build: `pnpm build`, output: `dist`, framework: `vite`)
+- Project linked to Vercel with automatic GitHub integration for continuous deployment
+- No environment variables required (confirmed)
+- Production deployment live at https://solar-system-3d-opal.vercel.app
+- Vercel deployment badge in README
+- Production URL documented in README and repository description
+
+---
+
 ## [0.10.0] — 2025-04-10 — Documentation & Deploy prep
 
 ### Added
