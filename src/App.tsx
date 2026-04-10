@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react";
+import { Suspense, useState, useCallback, useMemo } from "react";
 import { SolarSystemCanvas } from "./components/Scene/SolarSystemCanvas";
 import { Lights } from "./components/Scene/Lights";
 import { Sun } from "./components/Scene/Sun";
@@ -17,13 +17,15 @@ function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
   const [overviewTrigger, setOverviewTrigger] = useState(0);
 
-  // Filter out the Sun, render only planets
-  const planetsToRender = planets.filter((p) => p.type !== "star");
+  const planetsToRender = useMemo(
+    () => planets.filter((p) => p.type !== "star"),
+    []
+  );
 
-  const handleOverview = () => {
+  const handleOverview = useCallback(() => {
     deselectPlanet();
     setOverviewTrigger((t) => t + 1);
-  };
+  }, [deselectPlanet]);
 
   return (
     <>

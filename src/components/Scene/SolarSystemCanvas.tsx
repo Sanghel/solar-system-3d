@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import type { ReactNode } from "react";
 import { Mesh } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -22,15 +22,14 @@ export const SolarSystemCanvas = ({
 }: SolarSystemCanvasProps) => {
   const backgroundRef = useRef<Mesh>(null);
   const controlsRef = useRef<OrbitControlsImpl>(null);
+  const cameraConfig = useMemo(
+    () => ({ position: [0, 50, 100] as [number, number, number], fov: 75, near: 0.1, far: 100000 }),
+    []
+  );
 
   return (
     <Canvas
-      camera={{
-        position: [0, 50, 100],
-        fov: 75,
-        near: 0.1,
-        far: 100000,
-      }}
+      camera={cameraConfig}
       style={{
         width: "100%",
         height: "100%",
