@@ -11,12 +11,14 @@ interface SolarSystemCanvasProps {
   children?: ReactNode;
   onBackgroundClick?: () => void;
   selectedPlanet: Planet | null;
+  overviewTrigger: number;
 }
 
 export const SolarSystemCanvas = ({
   children,
   onBackgroundClick,
   selectedPlanet,
+  overviewTrigger,
 }: SolarSystemCanvasProps) => {
   const backgroundRef = useRef<Mesh>(null);
   const controlsRef = useRef<OrbitControlsImpl>(null);
@@ -52,6 +54,7 @@ export const SolarSystemCanvas = ({
       <CameraController
         controlsRef={controlsRef}
         selectedPlanet={selectedPlanet}
+        overviewTrigger={overviewTrigger}
       />
 
       {/* Background plane to capture deselection clicks */}

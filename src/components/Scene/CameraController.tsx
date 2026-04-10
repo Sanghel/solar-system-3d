@@ -8,6 +8,8 @@ import type { Planet } from "../../types/planet";
 interface CameraControllerProps {
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
   selectedPlanet: Planet | null;
+  /** Increment to trigger a camera reset regardless of selectedPlanet state. */
+  overviewTrigger: number;
 }
 
 /** Returns an appropriate camera distance based on the planet's visual size. */
@@ -17,13 +19,15 @@ function getCameraDistance(relativeSize: number): number {
 
 /**
  * Lives inside <Canvas> and drives camera animation whenever the selected
- * planet changes.  Uses scene.getObjectByName to find the planet mesh and
- * read its current world position, so the camera always flies to where the
- * planet actually is in its orbit at the moment of selection.
+ * planet changes or the overview trigger fires.
+ * Uses scene.getObjectByName to find the planet mesh and read its current
+ * world position, so the camera always flies to where the planet actually
+ * is in its orbit at the moment of selection.
  */
 export function CameraController({
   controlsRef,
   selectedPlanet,
+  overviewTrigger,
 }: CameraControllerProps) {
   const { scene } = useThree();
   const { moveTo, resetView } = useCameraAnimation(controlsRef);
@@ -57,6 +61,12 @@ export function CameraController({
 
     moveTo(cameraPos, planetPos.clone());
   }, [selectedPlanet, scene, moveTo, resetView]);
+
+  // Separate effect: always reset when overview is explicitly requested
+  useEffect(() => {
+    if (overviewTrigger === 0) return; // skip initial render
+    resetView();
+  }, [overviewTrigger, resetView]);
 
   return null;
 }
