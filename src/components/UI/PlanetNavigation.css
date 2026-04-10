@@ -1,12 +1,19 @@
 .planet-nav {
   position: fixed;
-  left: 16px;
+  left: var(--space-4);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  z-index: 100;
+  gap: var(--space-1);
+  z-index: var(--z-ui);
+  animation: navFadeIn 0.5s ease both;
+  will-change: transform, opacity;
+}
+
+@keyframes navFadeIn {
+  from { opacity: 0; transform: translateY(-50%) translateX(-8px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 
 /* ── Current planet label ── */
@@ -14,8 +21,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
-  margin-bottom: 4px;
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-1);
   min-height: 22px;
 }
 
@@ -23,91 +30,92 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   flex-shrink: 0;
   box-shadow: 0 0 6px currentColor;
 }
 
 .planet-nav__current-name {
-  color: #ffffff;
-  font-size: 13px;
+  color: var(--color-white);
+  font-size: var(--text-sm);
   font-weight: 600;
   font-family: inherit;
   letter-spacing: 0.03em;
 }
 
 .planet-nav__current-name--dim {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--color-white-30);
   font-weight: 400;
 }
 
 /* ── Overview button ── */
 .planet-nav__overview {
-  background: rgba(10, 10, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 11px;
-  font-family: monospace;
+  background: var(--color-surface);
+  border: 1px solid var(--color-white-30);
+  border-radius: var(--radius-xl);
+  color: var(--color-white-70);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   cursor: pointer;
-  padding: 6px 12px;
-  backdrop-filter: blur(12px);
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-  margin-bottom: 8px;
+  padding: 6px var(--space-3);
+  backdrop-filter: blur(var(--blur-md));
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  margin-bottom: var(--space-2);
   white-space: nowrap;
 }
 
 .planet-nav__overview:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-white-10);
   border-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 .planet-nav__overview--active {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.45);
-  color: #ffffff;
+  color: var(--color-white);
 }
 
 /* ── Planet list ── */
 .planet-nav__list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .planet-nav__btn {
+  animation: btnSlideIn 0.4s ease both;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   background: rgba(10, 10, 20, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
   border-left: 2px solid transparent;
-  border-radius: 20px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 12px;
+  border-radius: var(--radius-xl);
+  color: var(--color-white-50);
+  font-size: var(--text-sm);
   font-family: inherit;
   cursor: pointer;
-  padding: 5px 12px 5px 8px;
-  backdrop-filter: blur(12px);
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  padding: 5px var(--space-3) 5px var(--space-2);
+  backdrop-filter: blur(var(--blur-md));
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
   text-align: left;
   white-space: nowrap;
 }
 
 .planet-nav__btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background: var(--color-white-05);
+  border-color: var(--color-white-30);
+  color: var(--color-white);
 }
 
 .planet-nav__btn--active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-  border-left-color: var(--planet-color, rgba(255, 255, 255, 0.5));
-  color: #ffffff;
+  background: var(--color-white-10);
+  border-color: var(--color-white-30);
+  border-left-color: var(--planet-color, var(--color-white-50));
+  color: var(--color-white);
 }
 
 /* ── Dot ── */
@@ -115,21 +123,53 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   flex-shrink: 0;
-  transition: box-shadow 0.2s;
+  transition: box-shadow var(--transition-base);
 }
 
 .planet-nav__dot--active {
-  box-shadow: 0 0 6px 1px var(--planet-color, rgba(255, 255, 255, 0.5));
+  box-shadow: 0 0 6px 1px var(--planet-color, var(--color-white-50));
 }
 
 /* ── Planet name ── */
 .planet-nav__name {
-  font-size: 12px;
+  font-size: var(--text-sm);
   transition: font-weight 0.1s;
 }
 
 .planet-nav__name--active {
   font-weight: 600;
+}
+
+@keyframes btnSlideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.planet-nav__btn:nth-child(1)  { animation-delay: 0.05s; }
+.planet-nav__btn:nth-child(2)  { animation-delay: 0.10s; }
+.planet-nav__btn:nth-child(3)  { animation-delay: 0.15s; }
+.planet-nav__btn:nth-child(4)  { animation-delay: 0.20s; }
+.planet-nav__btn:nth-child(5)  { animation-delay: 0.25s; }
+.planet-nav__btn:nth-child(6)  { animation-delay: 0.30s; }
+.planet-nav__btn:nth-child(7)  { animation-delay: 0.35s; }
+.planet-nav__btn:nth-child(8)  { animation-delay: 0.40s; }
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .planet-nav {
+    /* Reposition to bottom-left above the time control */
+    top: auto;
+    bottom: 72px;
+    left: var(--space-3);
+    transform: none;
+    /* Show only overview + current label; hide full list */
+    max-height: 80px;
+    overflow: hidden;
+  }
+
+  .planet-nav__list {
+    display: none;
+  }
 }
