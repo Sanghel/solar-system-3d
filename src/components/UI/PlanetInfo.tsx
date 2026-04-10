@@ -40,7 +40,16 @@ export const PlanetInfo = ({ planet, onClose }: PlanetInfoProps) => {
       {/* Header */}
       <div className="planet-info-header" style={{ borderColor: planet.baseColor }}>
         <div className="planet-info-header__icon" aria-hidden="true">
-          {typeIcon}
+          <img
+            src={planet.texture}
+            alt={planet.name}
+            className="planet-info-header__img"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+              (e.currentTarget.nextElementSibling as HTMLElement | null)?.removeAttribute('hidden');
+            }}
+          />
+          <span hidden>{typeIcon}</span>
         </div>
         <div className="planet-info-header__text">
           <h2 className="planet-name" style={{ color: planet.baseColor, textShadow: `0 0 12px ${planet.baseColor}80` }}>
@@ -83,7 +92,7 @@ export const PlanetInfo = ({ planet, onClose }: PlanetInfoProps) => {
           <div className="info-grid">
             <div className="info-item">
               <label>Rotation Speed</label>
-              <p>{planet.rotationSpeed.toFixed(4)}</p>
+              <p>{planet.rotationSpeed.toFixed(4)} rad/s</p>
             </div>
             <div className="info-item">
               <label>Orbit Speed</label>
