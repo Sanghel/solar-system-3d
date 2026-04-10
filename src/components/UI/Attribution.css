@@ -116,8 +116,14 @@
 /* ── Mobile ── */
 
 @media (max-width: 480px) {
-  /* Hide on mobile — the Header brand fills the top bar leaving no room */
+  /* Push Attribution below the Header title instead of overlapping it.
+     Header height ≈ padding-top (16px) + line-height (~20px) + padding-bottom (16px) = ~52px */
   .attribution {
-    display: none;
+    padding-top: 50px;
+  }
+
+  .attribution__text {
+    font-size: 10px;
+    gap: 4px;
   }
 }
