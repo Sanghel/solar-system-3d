@@ -38,8 +38,8 @@ const PlanetTexturedMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
       ref={meshRef}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
-      onPointerEnter={() => onHover?.(true)}
-      onPointerLeave={() => onHover?.(false)}
+      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; onHover?.(true); }}
+      onPointerLeave={() => { document.body.style.cursor = "auto"; onHover?.(false); }}
     >
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
@@ -70,8 +70,8 @@ const PlanetFallbackMesh = ({ planet, isSelected, onSelect, onHover }: PlanetMes
       ref={meshRef}
       name={planet.id}
       onClick={() => onSelect?.(planet)}
-      onPointerEnter={() => onHover?.(true)}
-      onPointerLeave={() => onHover?.(false)}
+      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = "pointer"; onHover?.(true); }}
+      onPointerLeave={() => { document.body.style.cursor = "auto"; onHover?.(false); }}
     >
       <sphereGeometry args={[planet.relativeSize, 32, 32]} />
       <meshStandardMaterial
