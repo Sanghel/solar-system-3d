@@ -8,6 +8,7 @@ import { PlanetInfo } from "./components/UI/PlanetInfo";
 import { PlanetNavigation } from "./components/UI/PlanetNavigation";
 import { SceneLoader } from "./components/UI/LoadingScreen";
 import { TimeControl } from "./components/UI/TimeControl";
+import { Header } from "./components/UI/Header";
 import { planets } from "./data/planets";
 import { usePlanetSelection } from "./hooks/usePlanetSelection";
 import { getOrbitRadius } from "./utils/orbitUtils";
@@ -53,6 +54,7 @@ function App() {
         </Suspense>
       </SolarSystemCanvas>
 
+      <Header />
       <PlanetNavigation
         planets={planetsToRender}
         selectedPlanet={selectedPlanet}
