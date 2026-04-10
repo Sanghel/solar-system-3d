@@ -20,11 +20,7 @@ interface PlanetMeshProps {
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
-const PlanetTexturedMesh = ({
-  planet,
-  isSelected,
-  onSelect,
-}: PlanetMeshProps) => {
+const PlanetTexturedMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
   const { timeScale } = useSimulation();
@@ -43,19 +39,15 @@ const PlanetTexturedMesh = ({
         map={texture}
         metalness={0.1}
         roughness={0.8}
-        emissive={isSelected ? planet.baseColor : "#000000"}
-        emissiveIntensity={isSelected ? 0.3 : 0}
+        emissiveMap={isSelected ? texture : undefined}
+        emissiveIntensity={isSelected ? 0.4 : 0}
       />
     </mesh>
   );
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({
-  planet,
-  isSelected,
-  onSelect,
-}: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, isSelected, onSelect }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const { timeScale } = useSimulation();
 
@@ -73,37 +65,52 @@ const PlanetFallbackMesh = ({
         color={planet.baseColor}
         metalness={0.3}
         roughness={0.7}
-        emissive={isSelected ? planet.baseColor : "#000000"}
-        emissiveIntensity={isSelected ? 0.5 : 0}
+        emissive={planet.baseColor}
+        emissiveIntensity={isSelected ? 0.4 : 0}
       />
     </mesh>
   );
 };
 
-/** Selection ring rendered inside the planet group so it follows the orbit. */
-const PlanetSelectionRing = ({ planet }: { planet: PlanetType }) => {
-  const ringRadius = planet.relativeSize * 1.5;
+/**
+ * Small downward-pointing arrow above the selected planet.
+ * Bobs gently up and down to draw attention without overwhelming the scene.
+ */
+const SelectionArrow = ({ planet }: { planet: PlanetType }) => {
+  const groupRef = useRef<Group>(null);
+  const coneRadius = Math.max(planet.relativeSize * 0.18, 0.8);
+  const coneHeight = coneRadius * 2.2;
+  // Position the tip just above the planet surface with a small gap
+  const yOffset = planet.relativeSize + coneHeight * 1.4;
+
+  useFrame((state) => {
+    if (groupRef.current) {
+      // Gentle vertical bob: ±coneHeight * 0.4 over ~2 seconds
+      groupRef.current.position.y =
+        yOffset + Math.sin(state.clock.elapsedTime * 2.5) * coneHeight * 0.4;
+    }
+  });
+
   return (
-    <mesh rotation={[Math.PI / 2, 0, 0]}>
-      <torusGeometry args={[ringRadius, ringRadius * 0.1, 16, 32]} />
-      <meshBasicMaterial color="#00ff00" />
-    </mesh>
+    <group ref={groupRef} position={[0, yOffset, 0]}>
+      {/* Cone pointing downward (rotate 180° on Z or flip via PI on X) */}
+      <mesh rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[coneRadius, coneHeight, 6]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.75} />
+      </mesh>
+    </group>
   );
 };
 
 /** Saturn's iconic ring system — two ring layers for a banded look. */
 const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
-  // Outer ring (bright band)
   const outerInner = planetRadius * 1.4;
   const outerOuter = planetRadius * 2.2;
-  // Inner ring (narrower, slightly darker)
   const innerInner = planetRadius * 1.1;
   const innerOuter = planetRadius * 1.35;
-  // Tilt: ~27° from horizontal (matching Saturn's real axial tilt roughly)
   const tilt: [number, number, number] = [Math.PI / 2 - 0.47, 0, 0];
   return (
     <group rotation={tilt}>
-      {/* Main bright ring */}
       <mesh>
         <ringGeometry args={[outerInner, outerOuter, 128]} />
         <meshBasicMaterial
@@ -113,7 +120,6 @@ const SaturnRing = ({ planetRadius }: { planetRadius: number }) => {
           side={2}
         />
       </mesh>
-      {/* Inner darker gap ring */}
       <mesh>
         <ringGeometry args={[innerInner, innerOuter, 128]} />
         <meshBasicMaterial
@@ -164,7 +170,7 @@ export const Planet = ({
       {planet.id === "saturn" && (
         <SaturnRing planetRadius={planet.relativeSize} />
       )}
-      {isSelected && <PlanetSelectionRing planet={planet} />}
+      {isSelected && <SelectionArrow planet={planet} />}
     </group>
   );
 };
