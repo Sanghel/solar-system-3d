@@ -7,6 +7,12 @@
   flex-direction: column;
   gap: var(--space-1);
   z-index: var(--z-ui);
+  animation: navFadeIn 0.5s ease both;
+}
+
+@keyframes navFadeIn {
+  from { opacity: 0; transform: translateY(-50%) translateX(-8px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 
 /* ── Current planet label ── */
@@ -79,6 +85,7 @@
 }
 
 .planet-nav__btn {
+  animation: btnSlideIn 0.4s ease both;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -133,6 +140,20 @@
 .planet-nav__name--active {
   font-weight: 600;
 }
+
+@keyframes btnSlideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.planet-nav__btn:nth-child(1)  { animation-delay: 0.05s; }
+.planet-nav__btn:nth-child(2)  { animation-delay: 0.10s; }
+.planet-nav__btn:nth-child(3)  { animation-delay: 0.15s; }
+.planet-nav__btn:nth-child(4)  { animation-delay: 0.20s; }
+.planet-nav__btn:nth-child(5)  { animation-delay: 0.25s; }
+.planet-nav__btn:nth-child(6)  { animation-delay: 0.30s; }
+.planet-nav__btn:nth-child(7)  { animation-delay: 0.35s; }
+.planet-nav__btn:nth-child(8)  { animation-delay: 0.40s; }
 
 /* ── Mobile ── */
 @media (max-width: 480px) {
