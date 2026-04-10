@@ -116,8 +116,8 @@
 /* ── Mobile ── */
 
 @media (max-width: 480px) {
-  .attribution__text {
-    font-size: 10px;
-    gap: 4px;
+  /* Hide on mobile — the Header brand fills the top bar leaving no room */
+  .attribution {
+    display: none;
   }
 }
