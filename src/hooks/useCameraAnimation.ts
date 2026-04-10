@@ -11,11 +11,13 @@ export const INITIAL_LOOK_AT = new THREE.Vector3(0, 0, 0);
 const DEFAULT_MIN_DISTANCE = 50;
 const DEFAULT_MAX_DISTANCE = 650;
 
-/** Lerp factor controlling animation smoothness (higher = faster). */
-const CAMERA_LERP_FACTOR = 0.05;
+/** Total animation duration in seconds. */
+const ANIMATION_DURATION = 1.4;
 
-/** Distance threshold in world units to consider the animation complete. */
-const ARRIVAL_THRESHOLD = 0.5;
+/** Cubic ease-in-out: slow start, fast middle, slow end. */
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
 
 export interface MoveToOptions {
   /** Minimum zoom-in distance once OrbitControls re-enable. Defaults to 50. */
@@ -35,15 +37,15 @@ export interface UseCameraAnimationReturn {
 }
 
 /**
- * Manages smooth camera animation via lerp inside a React Three Fiber Canvas.
+ * Manages smooth camera animation inside a React Three Fiber Canvas.
  * Must be used inside a component that is a child of <Canvas>.
  *
- * Lifecycle per animation:
- * 1. moveTo() disables OrbitControls and stores target position/lookAt/bounds.
- * 2. useFrame lerps camera position and lookAt toward the target each frame.
- * 3. On arrival the controls are re-enabled with an updated target and the
- *    requested minDistance/maxDistance, so the user can pan/zoom around the
- *    focused object without snapping back.
+ * Each animation runs for ANIMATION_DURATION seconds with a cubic ease-in-out
+ * curve: the camera accelerates smoothly, reaches peak speed mid-flight, then
+ * decelerates into the target position.
+ *
+ * OrbitControls are disabled during animation and re-enabled (with an updated
+ * target and the requested minDistance/maxDistance) once the camera arrives.
  */
 export function useCameraAnimation(
   controlsRef: React.RefObject<OrbitControlsImpl | null>
@@ -56,16 +58,43 @@ export function useCameraAnimation(
   const targetLookAtRef = useRef<THREE.Vector3 | null>(null);
   const currentLookAtRef = useRef<THREE.Vector3>(INITIAL_LOOK_AT.clone());
 
+  // Snapshot of camera state at the moment each animation begins
+  const startPositionRef = useRef<THREE.Vector3>(INITIAL_CAMERA_POSITION.clone());
+  const startLookAtRef = useRef<THREE.Vector3>(INITIAL_LOOK_AT.clone());
+  const animStartTimeRef = useRef<number | null>(null);
+
   // Bounds to apply once controls re-enable after animation
   const pendingMinDistRef = useRef(DEFAULT_MIN_DISTANCE);
   const pendingMaxDistRef = useRef(DEFAULT_MAX_DISTANCE);
 
-  useFrame(() => {
+  useFrame((state) => {
     if (!targetPositionRef.current || !targetLookAtRef.current) return;
 
-    const distToTarget = camera.position.distanceTo(targetPositionRef.current);
+    // Record the starting state on the first frame of this animation
+    if (animStartTimeRef.current === null) {
+      animStartTimeRef.current = state.clock.elapsedTime;
+      startPositionRef.current = camera.position.clone();
+      startLookAtRef.current = currentLookAtRef.current.clone();
+    }
 
-    if (distToTarget < ARRIVAL_THRESHOLD) {
+    const elapsed = state.clock.elapsedTime - animStartTimeRef.current;
+    const rawT = Math.min(elapsed / ANIMATION_DURATION, 1);
+    const t = easeInOutCubic(rawT);
+
+    // Interpolate position and lookAt along the eased curve
+    camera.position.lerpVectors(
+      startPositionRef.current,
+      targetPositionRef.current,
+      t
+    );
+    currentLookAtRef.current.lerpVectors(
+      startLookAtRef.current,
+      targetLookAtRef.current,
+      t
+    );
+    camera.lookAt(currentLookAtRef.current);
+
+    if (rawT >= 1) {
       // Snap to exact target and finish animation
       camera.position.copy(targetPositionRef.current);
       currentLookAtRef.current.copy(targetLookAtRef.current);
@@ -79,15 +108,11 @@ export function useCameraAnimation(
         controlsRef.current.update();
       }
 
+      animStartTimeRef.current = null;
       targetPositionRef.current = null;
       targetLookAtRef.current = null;
       setIsAnimating(false);
-      return;
     }
-
-    camera.position.lerp(targetPositionRef.current, CAMERA_LERP_FACTOR);
-    currentLookAtRef.current.lerp(targetLookAtRef.current, CAMERA_LERP_FACTOR);
-    camera.lookAt(currentLookAtRef.current);
   });
 
   const moveTo = useCallback(
@@ -100,6 +125,8 @@ export function useCameraAnimation(
       targetLookAtRef.current = lookAt.clone();
       pendingMinDistRef.current = options.minDistance ?? DEFAULT_MIN_DISTANCE;
       pendingMaxDistRef.current = options.maxDistance ?? DEFAULT_MAX_DISTANCE;
+      // Reset start-time so useFrame records camera state on the next frame
+      animStartTimeRef.current = null;
 
       if (controlsRef.current) {
         controlsRef.current.enabled = false;
