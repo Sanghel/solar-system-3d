@@ -1,0 +1,115 @@
+/* ============================================================
+   SOLAR SYSTEM 3D — Global CSS Variables & Base Styles
+   ============================================================ */
+
+/* ── Color Palette ── */
+:root {
+  /* Brand / accent */
+  --color-accent:        #00ffc8;
+  --color-accent-dim:    rgba(0, 255, 200, 0.6);
+  --color-accent-faint:  rgba(0, 255, 200, 0.15);
+  --color-accent-glow:   rgba(0, 255, 200, 0.35);
+
+  /* Solar gold */
+  --color-solar:         #fdb813;
+  --color-solar-dim:     rgba(253, 184, 19, 0.7);
+  --color-solar-faint:   rgba(253, 184, 19, 0.15);
+
+  /* Neutrals */
+  --color-white:         #ffffff;
+  --color-white-70:      rgba(255, 255, 255, 0.7);
+  --color-white-50:      rgba(255, 255, 255, 0.5);
+  --color-white-30:      rgba(255, 255, 255, 0.3);
+  --color-white-10:      rgba(255, 255, 255, 0.1);
+  --color-white-05:      rgba(255, 255, 255, 0.05);
+
+  /* Backgrounds */
+  --color-bg:            #000000;
+  --color-surface:       rgba(10, 14, 26, 0.88);
+  --color-surface-light: rgba(18, 24, 44, 0.92);
+  --color-overlay:       rgba(0, 0, 0, 0.6);
+
+  /* Borders */
+  --color-border:        rgba(255, 255, 255, 0.12);
+  --color-border-accent: rgba(0, 255, 200, 0.3);
+
+  /* ── Typography ── */
+  --font-sans:   -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono:   'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+
+  --text-xs:   11px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-md:   16px;
+  --text-lg:   20px;
+  --text-xl:   24px;
+  --text-2xl:  28px;
+  --text-3xl:  36px;
+
+  /* ── Spacing ── */
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+
+  /* ── Radii ── */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md:     0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.7);
+  --shadow-glow:   0 0 12px var(--color-accent-glow);
+  --shadow-solar:  0 0 12px rgba(253, 184, 19, 0.4);
+
+  /* ── Transitions ── */
+  --transition-fast:   0.12s ease;
+  --transition-base:   0.2s ease;
+  --transition-slow:   0.35s ease;
+  --transition-panel:  0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Blur ── */
+  --blur-sm:  6px;
+  --blur-md:  12px;
+  --blur-lg:  20px;
+
+  /* ── Z-index layers ── */
+  --z-scene:   0;
+  --z-ui:      100;
+  --z-overlay: 200;
+  --z-modal:   300;
+  --z-toast:   400;
+}
+
+/* ── Base reset (extends index.css) ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6,
+p, ul, ol, figure, blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+/* ── Focus ring (accessibility) ── */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
