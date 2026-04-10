@@ -126,6 +126,17 @@ Each feature is developed on its own branch, reviewed via PR into `develop`, the
 - All components that receive stable props are wrapped with `React.memo`
 - CSS custom properties are defined in `src/styles/global.css`
 
+## Deployment
+
+The project is deployed on [Vercel](https://vercel.com) with automatic deployments on every push to `main`.
+
+| | |
+|---|---|
+| **Production URL** | https://solar-system-3d-opal.vercel.app |
+| **Platform** | Vercel |
+| **Build** | `pnpm build` → `dist/` |
+| **Auto-deploy** | On push to `main` |
+
 ## License
 
 MIT — see [LICENSE](LICENSE) for details.
