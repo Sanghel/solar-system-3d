@@ -113,3 +113,77 @@ button {
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
+
+/* ============================================================
+   Button System
+   ============================================================ */
+
+/* Base button — ghost style, works on dark backgrounds */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-full);
+  padding: 7px var(--space-4);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-white-70);
+  backdrop-filter: blur(var(--blur-md));
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.btn:hover {
+  background: var(--color-white-10);
+  border-color: var(--color-white-30);
+  color: var(--color-white);
+}
+
+.btn:active {
+  background: var(--color-white-05);
+  transform: scale(0.97);
+}
+
+/* Icon-only button (square/round) */
+.btn--icon {
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-md);
+}
+
+/* Accent variant */
+.btn--accent {
+  border-color: var(--color-border-accent);
+  color: var(--color-accent);
+}
+
+.btn--accent:hover {
+  background: var(--color-accent-faint);
+  border-color: var(--color-accent-dim);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Solar / gold variant */
+.btn--solar {
+  border-color: var(--color-solar-faint);
+  color: var(--color-solar);
+}
+
+.btn--solar:hover {
+  background: var(--color-solar-faint);
+  border-color: var(--color-solar-dim);
+  box-shadow: var(--shadow-solar);
+}
