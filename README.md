@@ -7,7 +7,6 @@ An interactive 3D visualization of the Solar System built with React, Three.js, 
 **Live demo:** https://solar-system-3d-opal.vercel.app
 
 ## Features
-
 - **Interactive 3D scene** — click any planet to fly the camera to it
 - **Planet info panel** — diameter, temperature, distance from Sun, satellites, orbital speed and a fun fact per planet
 - **Time controls** — pause, play, and adjust simulation speed (0.1× to 10×)
