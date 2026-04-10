@@ -77,7 +77,12 @@ export function CameraController({
       planetPos.z + lateral
     );
 
-    moveTo(cameraPos, planetPos.clone());
+    moveTo(cameraPos, planetPos.clone(), {
+      // Allow zooming in close to the planet surface but not past the centre
+      minDistance: Math.max(selectedPlanet.relativeSize * 1.5, 5),
+      // Limit zoom-out so the planet stays easily visible
+      maxDistance: lateral * 4,
+    });
   }, [selectedPlanet, scene, moveTo, resetView]);
 
   // Separate effect: always reset when overview is explicitly requested
