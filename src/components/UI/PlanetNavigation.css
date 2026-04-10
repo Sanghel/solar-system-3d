@@ -133,3 +133,21 @@
 .planet-nav__name--active {
   font-weight: 600;
 }
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .planet-nav {
+    /* Reposition to bottom-left above the time control */
+    top: auto;
+    bottom: 72px;
+    left: var(--space-3);
+    transform: none;
+    /* Show only overview + current label; hide full list */
+    max-height: 80px;
+    overflow: hidden;
+  }
+
+  .planet-nav__list {
+    display: none;
+  }
+}
