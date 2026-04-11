@@ -1,4 +1,4 @@
-import type { Planet, Satellite } from "../types/planet";
+import type { Planet } from "../types/planet";
 
 export const planets: Planet[] = [
   {
