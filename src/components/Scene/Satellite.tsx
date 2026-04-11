@@ -1,27 +1,38 @@
-import { memo, useRef, Suspense } from "react";
+import { memo, useRef, Suspense, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
+import { useTexture, Html } from "@react-three/drei";
 import { Group } from "three";
 import type { Satellite as SatelliteType } from "../../types/planet";
 import { useSimulation } from "../../context/SimulationContext";
 
 interface SatelliteProps {
   satellite: SatelliteType;
-  /** Parent planet's relativeSize — scales the orbitRadius to scene units */
+  /** Parent planet's relativeSize — scales the orbitRadius and selected scale */
   planetSize: number;
-  /** When true the satellite is rendered slightly larger to aid visibility */
+  /** When true the satellite is rendered larger and orbit rings are shown */
   isSelected?: boolean;
 }
 
 interface SatelliteMeshProps {
   satellite: SatelliteType;
+  onHover?: (hovered: boolean) => void;
 }
 
 /** Inner mesh that loads and applies the satellite texture via Suspense. */
-const SatelliteTexturedMesh = ({ satellite }: SatelliteMeshProps) => {
+const SatelliteTexturedMesh = ({ satellite, onHover }: SatelliteMeshProps) => {
   const texture = useTexture(satellite.texturePath!);
   return (
-    <mesh>
+    <mesh
+      onPointerEnter={(e) => {
+        e.stopPropagation();
+        document.body.style.cursor = "pointer";
+        onHover?.(true);
+      }}
+      onPointerLeave={() => {
+        document.body.style.cursor = "auto";
+        onHover?.(false);
+      }}
+    >
       <sphereGeometry args={[satellite.size, 16, 16]} />
       <meshStandardMaterial map={texture} metalness={0.1} roughness={0.7} />
     </mesh>
@@ -29,8 +40,18 @@ const SatelliteTexturedMesh = ({ satellite }: SatelliteMeshProps) => {
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is provided. */
-const SatelliteFallbackMesh = ({ satellite }: SatelliteMeshProps) => (
-  <mesh>
+const SatelliteFallbackMesh = ({ satellite, onHover }: SatelliteMeshProps) => (
+  <mesh
+    onPointerEnter={(e) => {
+      e.stopPropagation();
+      document.body.style.cursor = "pointer";
+      onHover?.(true);
+    }}
+    onPointerLeave={() => {
+      document.body.style.cursor = "auto";
+      onHover?.(false);
+    }}
+  >
     <sphereGeometry args={[satellite.size, 16, 16]} />
     <meshStandardMaterial
       color={satellite.color ?? "#A0A0A0"}
@@ -49,18 +70,21 @@ const SatelliteFallbackMesh = ({ satellite }: SatelliteMeshProps) => (
  * axial tilt group.
  */
 export const Satellite = memo(({ satellite, planetSize, isSelected }: SatelliteProps) => {
-  // Random initial angle so moons don't all start at the same position
   const angleRef = useRef<number>(Math.random() * Math.PI * 2);
   const groupRef = useRef<Group>(null);
   const { timeScale } = useSimulation();
+  const [hovered, setHovered] = useState(false);
 
-  // Scale orbit to scene units using the planet's rendered size
   const orbitRadius = satellite.orbitRadius * planetSize;
+
+  // Scale proportional to planet size so moons look right relative to their planet.
+  // Larger planets (Jupiter 25, Saturn 20) get a bigger boost than smaller ones (Earth 10).
+  const selectedScale = Math.max(2.5, planetSize * 0.15);
+  const scale = isSelected ? selectedScale : 1;
 
   useFrame((_, delta) => {
     angleRef.current += satellite.orbitSpeed * timeScale * delta * 60;
     if (groupRef.current) {
-      // Local position relative to the planet orbital group center
       groupRef.current.position.set(
         orbitRadius * Math.cos(angleRef.current),
         0,
@@ -69,16 +93,49 @@ export const Satellite = memo(({ satellite, planetSize, isSelected }: SatelliteP
     }
   });
 
-  const scale = isSelected ? 1.6 : 1;
-
   return (
-    <group ref={groupRef} scale={scale}>
-      {satellite.texturePath ? (
-        <Suspense fallback={<SatelliteFallbackMesh satellite={satellite} />}>
-          <SatelliteTexturedMesh satellite={satellite} />
-        </Suspense>
-      ) : (
-        <SatelliteFallbackMesh satellite={satellite} />
+    // groupRef drives the orbital position; scale is applied to an inner group
+    // so the tooltip Html can sit in unscaled local space for correct positioning.
+    <group ref={groupRef}>
+      <group scale={scale}>
+        {satellite.texturePath ? (
+          <Suspense fallback={<SatelliteFallbackMesh satellite={satellite} onHover={setHovered} />}>
+            <SatelliteTexturedMesh satellite={satellite} onHover={setHovered} />
+          </Suspense>
+        ) : (
+          <SatelliteFallbackMesh satellite={satellite} onHover={setHovered} />
+        )}
+      </group>
+      {hovered && (
+        <Html
+          center
+          position={[0, satellite.size * scale + 0.4, 0]}
+          style={{ pointerEvents: "none" }}
+        >
+          <div
+            style={{
+              background: "rgba(8, 14, 30, 0.92)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              borderRadius: "8px",
+              padding: "4px 10px",
+              backdropFilter: "blur(10px)",
+              whiteSpace: "nowrap",
+              textAlign: "center",
+              userSelect: "none",
+            }}
+          >
+            <div
+              style={{
+                color: "#ffffff",
+                fontWeight: 700,
+                fontSize: "12px",
+                letterSpacing: "0.04em",
+              }}
+            >
+              {satellite.name}
+            </div>
+          </div>
+        </Html>
       )}
     </group>
   );
