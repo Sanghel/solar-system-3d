@@ -19,8 +19,10 @@ export interface Planet {
   baseColor: string;
   /** Radius in scene world units — does not correspond to real scale */
   relativeSize: number;
-  /** Rotation speed in radians per simulation step */
+  /** Rotation speed in radians per simulation step (negative = retrograde) */
   rotationSpeed: number;
+  /** Axial tilt in degrees relative to the orbital plane */
+  axialTilt: number;
   /** Orbital speed in radians per simulation step */
   orbitSpeed: number;
   /** Path to the texture file served from /public (e.g. "/textures/earth.jpg") */
