@@ -1,3 +1,18 @@
+export interface Satellite {
+  /** Display name of the moon */
+  name: string;
+  /** Orbit radius in scene units relative to the planet's relativeSize */
+  orbitRadius: number;
+  /** Orbital speed in radians per simulation step */
+  orbitSpeed: number;
+  /** Sphere radius in scene units */
+  size: number;
+  /** Path to texture file served from /public (e.g. "/textures/satellites/moon.jpg") */
+  texturePath?: string;
+  /** Fallback color hex when no texture is provided */
+  color?: string;
+}
+
 export interface Planet {
   /** Unique identifier used as the Three.js mesh name for scene lookups */
   id: string;
@@ -27,4 +42,6 @@ export interface Planet {
   orbitSpeed: number;
   /** Path to the texture file served from /public (e.g. "/textures/earth.jpg") */
   texture?: string;
+  /** Famous moons to render visually in the 3D scene */
+  satellites?: Satellite[];
 }

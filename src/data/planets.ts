@@ -1,4 +1,4 @@
-import type { Planet } from "../types/planet";
+import type { Planet, Satellite } from "../types/planet";
 
 export const planets: Planet[] = [
   {
@@ -68,6 +68,15 @@ export const planets: Planet[] = [
     axialTilt: 23.44,
     orbitSpeed: 0.01,
     texture: "/textures/earth.jpg",
+    satellites: [
+      {
+        name: "Moon",
+        orbitRadius: 2.8,
+        orbitSpeed: 0.03,
+        size: 0.27,
+        texturePath: "/textures/satellites/moon.jpg",
+      },
+    ],
   },
   {
     id: "mars",
@@ -85,6 +94,10 @@ export const planets: Planet[] = [
     axialTilt: 25.19,
     orbitSpeed: 0.008,
     texture: "/textures/mars.jpg",
+    satellites: [
+      { name: "Phobos", orbitRadius: 1.8, orbitSpeed: 0.08, size: 0.08, color: "#A09080" },
+      { name: "Deimos", orbitRadius: 2.5, orbitSpeed: 0.04, size: 0.05, color: "#B0A090" },
+    ],
   },
   {
     id: "jupiter",
@@ -102,6 +115,12 @@ export const planets: Planet[] = [
     axialTilt: 3.13,
     orbitSpeed: 0.002,
     texture: "/textures/jupiter.jpg",
+    satellites: [
+      { name: "Io",       orbitRadius: 4.5, orbitSpeed: 0.025, size: 0.36, texturePath: "/textures/satellites/io.jpg" },
+      { name: "Europa",   orbitRadius: 6.0, orbitSpeed: 0.018, size: 0.31, texturePath: "/textures/satellites/europa.jpg" },
+      { name: "Ganymede", orbitRadius: 7.8, orbitSpeed: 0.012, size: 0.52, texturePath: "/textures/satellites/ganymede.jpg" },
+      { name: "Callisto", orbitRadius: 9.8, orbitSpeed: 0.008, size: 0.48, texturePath: "/textures/satellites/callisto.jpg" },
+    ],
   },
   {
     id: "saturn",
@@ -119,6 +138,11 @@ export const planets: Planet[] = [
     axialTilt: 26.73,
     orbitSpeed: 0.0009,
     texture: "/textures/saturn.jpg",
+    satellites: [
+      { name: "Titan",     orbitRadius: 5.5, orbitSpeed: 0.01,  size: 0.52, texturePath: "/textures/satellites/titan.jpg" },
+      { name: "Enceladus", orbitRadius: 3.5, orbitSpeed: 0.022, size: 0.10, color: "#E8E8F0" },
+      { name: "Rhea",      orbitRadius: 4.4, orbitSpeed: 0.015, size: 0.15, color: "#C8C0B8" },
+    ],
   },
   {
     id: "uranus",
@@ -136,6 +160,10 @@ export const planets: Planet[] = [
     axialTilt: 97.77,
     orbitSpeed: 0.0004,
     texture: "/textures/uranus.jpg",
+    satellites: [
+      { name: "Titania", orbitRadius: 4.5, orbitSpeed: 0.012, size: 0.16, color: "#B8B0C0" },
+      { name: "Oberon",  orbitRadius: 5.5, orbitSpeed: 0.009, size: 0.15, color: "#A8A0B0" },
+    ],
   },
   {
     id: "neptune",
@@ -153,5 +181,8 @@ export const planets: Planet[] = [
     axialTilt: 28.32,
     orbitSpeed: 0.0001,
     texture: "/textures/neptune.jpg",
+    satellites: [
+      { name: "Triton", orbitRadius: 4.5, orbitSpeed: -0.015, size: 0.21, texturePath: "/textures/satellites/triton.jpg" },
+    ],
   },
 ];
