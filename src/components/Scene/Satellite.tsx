@@ -9,6 +9,8 @@ interface SatelliteProps {
   satellite: SatelliteType;
   /** Parent planet's relativeSize — scales the orbitRadius to scene units */
   planetSize: number;
+  /** When true the satellite is rendered slightly larger to aid visibility */
+  isSelected?: boolean;
 }
 
 interface SatelliteMeshProps {
@@ -46,7 +48,7 @@ const SatelliteFallbackMesh = ({ satellite }: SatelliteMeshProps) => (
  * planet's local XZ plane (ecliptic-aligned), independent of the planet's
  * axial tilt group.
  */
-export const Satellite = memo(({ satellite, planetSize }: SatelliteProps) => {
+export const Satellite = memo(({ satellite, planetSize, isSelected }: SatelliteProps) => {
   // Random initial angle so moons don't all start at the same position
   const angleRef = useRef<number>(Math.random() * Math.PI * 2);
   const groupRef = useRef<Group>(null);
@@ -67,8 +69,10 @@ export const Satellite = memo(({ satellite, planetSize }: SatelliteProps) => {
     }
   });
 
+  const scale = isSelected ? 1.6 : 1;
+
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} scale={scale}>
       {satellite.texturePath ? (
         <Suspense fallback={<SatelliteFallbackMesh satellite={satellite} />}>
           <SatelliteTexturedMesh satellite={satellite} />

@@ -7,6 +7,7 @@ import { planets } from "../../data/planets";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 import { useSimulation } from "../../context/SimulationContext";
 import { Satellite } from "./Satellite";
+import { Orbit } from "./Orbit";
 
 // Preload all planet and satellite textures at module load time so they start
 // downloading before any Planet/Satellite component mounts
@@ -270,6 +271,16 @@ export const Planet = memo(
             key={satellite.name}
             satellite={satellite}
             planetSize={planet.relativeSize}
+            isSelected={isSelected}
+          />
+        ))}
+        {isSelected && planet.satellites?.map((satellite) => (
+          <Orbit
+            key={`orbit-${satellite.name}`}
+            radius={satellite.orbitRadius * planet.relativeSize}
+            color={planet.baseColor}
+            opacity={0.25}
+            segments={64}
           />
         ))}
         {isSelected && <SelectionArrow planet={planet} />}
