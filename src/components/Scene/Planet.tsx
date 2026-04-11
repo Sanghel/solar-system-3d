@@ -241,18 +241,26 @@ export const Planet = memo(
       onHover: setHovered,
     };
 
+    // Axial tilt applied as a static Z rotation on the inner group so the
+    // self-rotation (Y axis in mesh) and orbital movement (outer group) remain
+    // independent. SelectionArrow and Tooltip stay outside so they always
+    // point "up" in scene coordinates regardless of tilt.
+    const axialTiltRad = (planet.axialTilt * Math.PI) / 180;
+
     return (
       <group ref={groupRef}>
-        {planet.texture ? (
-          <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
-            <PlanetTexturedMesh {...meshProps} />
-          </Suspense>
-        ) : (
-          <PlanetFallbackMesh {...meshProps} />
-        )}
-        {planet.id === "saturn" && (
-          <SaturnRing planetRadius={planet.relativeSize} />
-        )}
+        <group rotation={[0, 0, axialTiltRad]}>
+          {planet.texture ? (
+            <Suspense fallback={<PlanetFallbackMesh {...meshProps} />}>
+              <PlanetTexturedMesh {...meshProps} />
+            </Suspense>
+          ) : (
+            <PlanetFallbackMesh {...meshProps} />
+          )}
+          {planet.id === "saturn" && (
+            <SaturnRing planetRadius={planet.relativeSize} />
+          )}
+        </group>
         {isSelected && <SelectionArrow planet={planet} />}
         {hovered && !isSelected && <PlanetTooltip planet={planet} />}
       </group>
