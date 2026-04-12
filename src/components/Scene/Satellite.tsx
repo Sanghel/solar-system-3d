@@ -4,6 +4,7 @@ import { useTexture, Html } from "@react-three/drei";
 import { Group } from "three";
 import type { Satellite as SatelliteType } from "../../types/planet";
 import { useSimulation } from "../../context/SimulationContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface SatelliteProps {
   satellite: SatelliteType;
@@ -16,10 +17,11 @@ interface SatelliteProps {
 interface SatelliteMeshProps {
   satellite: SatelliteType;
   onHover?: (hovered: boolean) => void;
+  segments?: number;
 }
 
 /** Inner mesh that loads and applies the satellite texture via Suspense. */
-const SatelliteTexturedMesh = ({ satellite, onHover }: SatelliteMeshProps) => {
+const SatelliteTexturedMesh = ({ satellite, onHover, segments = 16 }: SatelliteMeshProps) => {
   const texture = useTexture(satellite.texturePath!);
   return (
     <mesh
@@ -33,14 +35,14 @@ const SatelliteTexturedMesh = ({ satellite, onHover }: SatelliteMeshProps) => {
         onHover?.(false);
       }}
     >
-      <sphereGeometry args={[satellite.size, 16, 16]} />
+      <sphereGeometry args={[satellite.size, segments, segments]} />
       <meshStandardMaterial map={texture} metalness={0.1} roughness={0.7} />
     </mesh>
   );
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is provided. */
-const SatelliteFallbackMesh = ({ satellite, onHover }: SatelliteMeshProps) => (
+const SatelliteFallbackMesh = ({ satellite, onHover, segments = 16 }: SatelliteMeshProps) => (
   <mesh
     onPointerEnter={(e) => {
       e.stopPropagation();
@@ -52,7 +54,7 @@ const SatelliteFallbackMesh = ({ satellite, onHover }: SatelliteMeshProps) => (
       onHover?.(false);
     }}
   >
-    <sphereGeometry args={[satellite.size, 16, 16]} />
+    <sphereGeometry args={[satellite.size, segments, segments]} />
     <meshStandardMaterial
       color={satellite.color ?? "#A0A0A0"}
       metalness={0.1}
@@ -73,7 +75,9 @@ export const Satellite = memo(({ satellite, planetSize, isSelected }: SatelliteP
   const angleRef = useRef<number>(Math.random() * Math.PI * 2);
   const groupRef = useRef<Group>(null);
   const { timeScale } = useSimulation();
+  const isMobile = useIsMobile();
   const [hovered, setHovered] = useState(false);
+  const segments = isMobile ? 8 : 16;
 
   const orbitRadius = satellite.orbitRadius * planetSize;
 
@@ -99,11 +103,11 @@ export const Satellite = memo(({ satellite, planetSize, isSelected }: SatelliteP
     <group ref={groupRef}>
       <group scale={scale}>
         {satellite.texturePath ? (
-          <Suspense fallback={<SatelliteFallbackMesh satellite={satellite} onHover={setHovered} />}>
-            <SatelliteTexturedMesh satellite={satellite} onHover={setHovered} />
+          <Suspense fallback={<SatelliteFallbackMesh satellite={satellite} onHover={setHovered} segments={segments} />}>
+            <SatelliteTexturedMesh satellite={satellite} onHover={setHovered} segments={segments} />
           </Suspense>
         ) : (
-          <SatelliteFallbackMesh satellite={satellite} onHover={setHovered} />
+          <SatelliteFallbackMesh satellite={satellite} onHover={setHovered} segments={segments} />
         )}
       </group>
       {hovered && (
