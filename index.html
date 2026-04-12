@@ -32,6 +32,13 @@
     <link rel="preload" href="/textures/sun.jpg" as="image" />
   </head>
   <body>
+    <!-- Pre-React loading indicator — visible immediately (before JS downloads).
+         Hidden by LoadingOverlay as soon as React mounts. Gives Lighthouse an
+         instant First Contentful Paint instead of waiting for WebGL init. -->
+    <div id="pre-loader" style="position:fixed;inset:0;background:#000011;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;font-family:monospace">
+      <p style="color:#ffffff;font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin:0">Solar System</p>
+      <p style="color:rgba(255,255,255,.45);font-size:11px;letter-spacing:.08em;margin:0">Loading simulation…</p>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

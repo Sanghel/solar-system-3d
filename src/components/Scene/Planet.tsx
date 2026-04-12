@@ -10,11 +10,12 @@ import { useIsMobile } from "../../hooks/useIsMobile";
 import { Satellite } from "./Satellite";
 import { Orbit } from "./Orbit";
 
-// Preload all planet and satellite textures at module load time so they start
-// downloading before any Planet/Satellite component mounts
+// Preload planet textures at module load time so they start downloading before
+// any Planet component mounts. Satellite textures are intentionally excluded —
+// they are not visible until a planet is selected, so deferring them reduces
+// the initial network payload and improves FCP/LCP on slow connections.
 planets.forEach((p) => {
   if (p.texture) useTexture.preload(p.texture);
-  p.satellites?.forEach((s) => s.texturePath && useTexture.preload(s.texturePath));
 });
 
 interface PlanetComponentProps {
