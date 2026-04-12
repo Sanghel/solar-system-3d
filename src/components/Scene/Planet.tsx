@@ -6,10 +6,15 @@ import type { Planet as PlanetType } from "../../types/planet";
 import { planets } from "../../data/planets";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 import { useSimulation } from "../../context/SimulationContext";
+import { Satellite } from "./Satellite";
+import { Orbit } from "./Orbit";
 
-// Preload all planet textures at module load time so they start downloading
-// before any Planet component mounts
-planets.forEach((p) => p.texture && useTexture.preload(p.texture));
+// Preload all planet and satellite textures at module load time so they start
+// downloading before any Planet/Satellite component mounts
+planets.forEach((p) => {
+  if (p.texture) useTexture.preload(p.texture);
+  p.satellites?.forEach((s) => s.texturePath && useTexture.preload(s.texturePath));
+});
 
 interface PlanetComponentProps {
   planet: PlanetType;
@@ -261,6 +266,23 @@ export const Planet = memo(
             <SaturnRing planetRadius={planet.relativeSize} />
           )}
         </group>
+        {planet.satellites?.map((satellite) => (
+          <Satellite
+            key={satellite.name}
+            satellite={satellite}
+            planetSize={planet.relativeSize}
+            isSelected={isSelected}
+          />
+        ))}
+        {isSelected && planet.satellites?.map((satellite) => (
+          <Orbit
+            key={`orbit-${satellite.name}`}
+            radius={satellite.orbitRadius * planet.relativeSize}
+            color={planet.baseColor}
+            opacity={0.25}
+            segments={64}
+          />
+        ))}
         {isSelected && <SelectionArrow planet={planet} />}
         {hovered && !isSelected && <PlanetTooltip planet={planet} />}
       </group>

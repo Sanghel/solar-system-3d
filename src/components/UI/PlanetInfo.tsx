@@ -102,6 +102,20 @@ export const PlanetInfo = memo(({ planet, onClose }: PlanetInfoProps) => {
           </div>
         </section>
 
+        {/* Known moons */}
+        {planet.satellites && planet.satellites.length > 0 && (
+          <section className="info-section">
+            <h3 className="info-section__title">Known Moons</h3>
+            <div className="satellites-list">
+              {planet.satellites.map((s) => (
+                <span key={s.name} className="satellite-chip">
+                  {s.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Fun fact */}
         <div className="fun-fact">
           <h3>Did you know?</h3>

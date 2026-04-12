@@ -172,6 +172,31 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Known moons ── */
+.satellites-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.satellite-chip {
+  background: var(--color-white-05);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  font-size: var(--text-sm);
+  color: var(--color-white-70);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.satellite-chip:hover {
+  background: var(--color-white-10);
+  border-color: var(--color-white-30);
+  color: var(--color-white);
+}
+
 /* ── Fun fact ── */
 .fun-fact {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);

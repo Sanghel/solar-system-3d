@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useCameraAnimation } from "../../hooks/useCameraAnimation";
@@ -38,20 +38,27 @@ function getCameraOffset(planet: Planet): { lateral: number; vertical: number } 
 /**
  * Lives inside <Canvas> and drives camera animation whenever the selected
  * planet changes or the overview trigger fires.
- * Uses scene.getObjectByName to find the planet mesh and read its current
- * world position, so the camera always flies to where the planet actually
- * is in its orbit at the moment of selection.
+ *
+ * After the fly-to animation completes, the camera continuously tracks the
+ * planet's orbital position: each frame the planet's world-space delta is
+ * applied to both the OrbitControls target and the camera position, so the
+ * user's chosen angle and distance are preserved while the planet moves.
  */
 export function CameraController({
   controlsRef,
   selectedPlanet,
   overviewTrigger,
 }: CameraControllerProps) {
-  const { scene } = useThree();
-  const { moveTo, resetView } = useCameraAnimation(controlsRef);
+  const { scene, camera } = useThree();
+  const { moveTo, resetView, isAnimating } = useCameraAnimation(controlsRef);
 
   // Skip the very first render so we don't reset the view on mount
   const isFirstRender = useRef(true);
+
+  // Tracks planet position from the previous frame for delta calculation
+  const prevPlanetPosRef = useRef<Vector3 | null>(null);
+  // Detects the frame when the fly-to animation finishes
+  const wasAnimatingRef = useRef(false);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -60,6 +67,7 @@ export function CameraController({
     }
 
     if (!selectedPlanet) {
+      prevPlanetPosRef.current = null;
       resetView();
       return;
     }
@@ -88,8 +96,44 @@ export function CameraController({
   // Separate effect: always reset when overview is explicitly requested
   useEffect(() => {
     if (overviewTrigger === 0) return; // skip initial render
+    prevPlanetPosRef.current = null;
     resetView();
   }, [overviewTrigger, resetView]);
+
+  // Each frame: once the fly-to finishes, follow the planet along its orbit.
+  // The delta between the planet's current and previous world position is
+  // added to both the OrbitControls target and the camera so the viewing
+  // angle and distance remain constant while the planet moves.
+  useFrame(() => {
+    const animationJustEnded = wasAnimatingRef.current && !isAnimating;
+    wasAnimatingRef.current = isAnimating;
+
+    if (isAnimating || !selectedPlanet || !controlsRef.current) return;
+
+    const planetMesh = scene.getObjectByName(selectedPlanet.id);
+    if (!planetMesh) return;
+
+    const currentPos = new Vector3();
+    planetMesh.getWorldPosition(currentPos);
+
+    if (animationJustEnded || !prevPlanetPosRef.current) {
+      // First follow frame: snap the OrbitControls target to the planet's
+      // actual current position (it may have moved during the 1.4 s fly-to).
+      const snapDelta = currentPos.clone().sub(controlsRef.current.target);
+      controlsRef.current.target.copy(currentPos);
+      camera.position.add(snapDelta);
+      controlsRef.current.update();
+    } else {
+      const delta = currentPos.clone().sub(prevPlanetPosRef.current);
+      if (delta.lengthSq() > 1e-6) {
+        controlsRef.current.target.add(delta);
+        camera.position.add(delta);
+        controlsRef.current.update();
+      }
+    }
+
+    prevPlanetPosRef.current = currentPos.clone();
+  });
 
   return null;
 }
