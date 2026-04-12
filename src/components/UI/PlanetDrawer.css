@@ -1,0 +1,129 @@
+/* Hidden on desktop */
+.drawer-backdrop,
+.planet-drawer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* ── Backdrop ── */
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 190;
+    animation: fadeIn 0.2s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── Drawer panel ── */
+  .planet-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 62vh;
+    background: linear-gradient(160deg, rgba(8, 14, 30, 0.98) 0%, rgba(14, 22, 48, 0.98) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+    z-index: 195;
+    padding: 0 0 calc(env(safe-area-inset-bottom) + 16px);
+    animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.6);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  /* ── Handle bar ── */
+  .drawer-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 12px auto 0;
+    flex-shrink: 0;
+  }
+
+  /* ── Title ── */
+  .drawer-title {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 14px 20px 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Scrollable list ── */
+  .drawer-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 12px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .drawer-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Planet item ── */
+  .drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 2px;
+  }
+
+  .drawer-item:active {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .drawer-item--active {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+  }
+
+  /* ── Color dot ── */
+  .drawer-item__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  .drawer-item__name {
+    flex: 1;
+  }
+
+  .drawer-item__active-indicator {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.4);
+  }
+}

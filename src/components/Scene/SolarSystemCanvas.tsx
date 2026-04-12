@@ -30,6 +30,7 @@ export const SolarSystemCanvas = ({
   return (
     <Canvas
       camera={cameraConfig}
+      dpr={[1, 2]}
       style={{
         width: "100%",
         height: "100%",

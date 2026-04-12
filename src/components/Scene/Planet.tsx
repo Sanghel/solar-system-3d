@@ -1,4 +1,4 @@
-import { useRef, Suspense, useState, memo } from "react";
+import { useRef, Suspense, useState, memo, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture, Html } from "@react-three/drei";
 import { Mesh, Group } from "three";
@@ -6,14 +6,16 @@ import type { Planet as PlanetType } from "../../types/planet";
 import { planets } from "../../data/planets";
 import { getOrbitRadius } from "../../utils/orbitUtils";
 import { useSimulation } from "../../context/SimulationContext";
+import { useIsMobile } from "../../hooks/useIsMobile";
 import { Satellite } from "./Satellite";
 import { Orbit } from "./Orbit";
 
-// Preload all planet and satellite textures at module load time so they start
-// downloading before any Planet/Satellite component mounts
+// Preload planet textures at module load time so they start downloading before
+// any Planet component mounts. Satellite textures are intentionally excluded —
+// they are not visible until a planet is selected, so deferring them reduces
+// the initial network payload and improves FCP/LCP on slow connections.
 planets.forEach((p) => {
   if (p.texture) useTexture.preload(p.texture);
-  p.satellites?.forEach((s) => s.texturePath && useTexture.preload(s.texturePath));
 });
 
 interface PlanetComponentProps {
@@ -28,6 +30,7 @@ interface PlanetMeshProps {
   isSelected?: boolean;
   onSelect?: (planet: PlanetType) => void;
   onHover?: (hovered: boolean) => void;
+  segments?: number;
 }
 
 /** Inner mesh that loads and applies the planet texture via Suspense. */
@@ -36,6 +39,7 @@ const PlanetTexturedMesh = ({
   isSelected,
   onSelect,
   onHover,
+  segments = 32,
 }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(planet.texture!);
@@ -63,7 +67,7 @@ const PlanetTexturedMesh = ({
         onHover?.(false);
       }}
     >
-      <sphereGeometry args={[planet.relativeSize, 32, 32]} />
+      <sphereGeometry args={[planet.relativeSize, segments, segments]} />
       <meshStandardMaterial
         map={texture}
         metalness={0.1}
@@ -76,7 +80,7 @@ const PlanetTexturedMesh = ({
 };
 
 /** Fallback mesh rendered while texture is loading or when no texture is available. */
-const PlanetFallbackMesh = ({ planet, onSelect, onHover }: PlanetMeshProps) => {
+const PlanetFallbackMesh = ({ planet, onSelect, onHover, segments = 32 }: PlanetMeshProps) => {
   const meshRef = useRef<Mesh>(null);
   const { timeScale } = useSimulation();
 
@@ -102,7 +106,7 @@ const PlanetFallbackMesh = ({ planet, onSelect, onHover }: PlanetMeshProps) => {
         onHover?.(false);
       }}
     >
-      <sphereGeometry args={[planet.relativeSize, 32, 32]} />
+      <sphereGeometry args={[planet.relativeSize, segments, segments]} />
       <meshStandardMaterial
         color={planet.baseColor}
         metalness={0.3}
@@ -223,10 +227,23 @@ export const Planet = memo(
   ({ planet, index, onSelect, isSelected }: PlanetComponentProps) => {
     const groupRef = useRef<Group>(null);
     const { timeScale } = useSimulation();
+    const isMobile = useIsMobile();
     const orbitRadius = getOrbitRadius(planet.distanceFromSun, planet.id);
     const initialAngle = (index * Math.PI * 2) / 8;
     const angleRef = useRef(initialAngle);
     const [hovered, setHovered] = useState(false);
+
+    // Reduce sphere complexity on mobile to improve GPU performance
+    const sphereSegments = isMobile ? 24 : 32;
+
+    // On mobile render only satellites that have a texture (skip plain-color ones)
+    const satellitesToRender = useMemo(
+      () =>
+        isMobile
+          ? (planet.satellites?.filter((s) => s.texturePath) ?? [])
+          : (planet.satellites ?? []),
+      [isMobile, planet.satellites]
+    );
 
     useFrame((_, delta) => {
       angleRef.current += planet.orbitSpeed * timeScale * delta * 60;
@@ -244,6 +261,7 @@ export const Planet = memo(
       isSelected,
       onSelect,
       onHover: setHovered,
+      segments: sphereSegments,
     };
 
     // Axial tilt applied as a static Z rotation on the inner group so the
@@ -266,7 +284,7 @@ export const Planet = memo(
             <SaturnRing planetRadius={planet.relativeSize} />
           )}
         </group>
-        {planet.satellites?.map((satellite) => (
+        {satellitesToRender.map((satellite) => (
           <Satellite
             key={satellite.name}
             satellite={satellite}
@@ -274,7 +292,7 @@ export const Planet = memo(
             isSelected={isSelected}
           />
         ))}
-        {isSelected && planet.satellites?.map((satellite) => (
+        {isSelected && satellitesToRender.map((satellite) => (
           <Orbit
             key={`orbit-${satellite.name}`}
             radius={satellite.orbitRadius * planet.relativeSize}

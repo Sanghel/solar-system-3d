@@ -1,0 +1,50 @@
+/* Hidden on desktop — only shown on mobile */
+.fab {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(8, 14, 30, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    z-index: 200;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .fab:hover,
+  .fab:active {
+    transform: scale(1.08);
+    background: rgba(20, 30, 60, 0.95);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .fab--open {
+    background: rgba(30, 20, 50, 0.95);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Panel-mode: accent border to signal it controls the info panel */
+  .fab--panel-mode {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .fab__icon {
+    font-size: 22px;
+    line-height: 1;
+    user-select: none;
+  }
+}
