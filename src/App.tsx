@@ -7,6 +7,8 @@ import { Orbit } from "./components/Scene/Orbit";
 import { SceneLoader } from "./components/UI/LoadingScreen";
 import { Header } from "./components/UI/Header";
 import { Attribution } from "./components/UI/Attribution";
+import { FloatingMenuButton } from "./components/UI/FloatingMenuButton";
+import { PlanetDrawer } from "./components/UI/PlanetDrawer";
 
 const PlanetInfo = lazy(() =>
   import("./components/UI/PlanetInfo").then((m) => ({ default: m.PlanetInfo }))
@@ -24,6 +26,7 @@ import { getOrbitRadius } from "./utils/orbitUtils";
 function App() {
   const { selectedPlanet, selectPlanet, deselectPlanet } = usePlanetSelection();
   const [overviewTrigger, setOverviewTrigger] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const planetsToRender = useMemo(
     () => planets.filter((p) => p.type !== "star"),
@@ -78,6 +81,17 @@ function App() {
         <PlanetInfo planet={selectedPlanet} onClose={deselectPlanet} />
         <TimeControl />
       </Suspense>
+      <FloatingMenuButton
+        isOpen={drawerOpen}
+        onClick={() => setDrawerOpen((o) => !o)}
+      />
+      <PlanetDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onSelectPlanet={selectPlanet}
+        planets={planetsToRender}
+        selectedPlanet={selectedPlanet}
+      />
       <Attribution />
     </>
   );
