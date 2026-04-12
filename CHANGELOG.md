@@ -10,6 +10,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [1.1.0] — 2026-04-12
+
+### Added
+- **Favicon** redesigned as a Saturn-style planet with rings (SVG, `clipPath` layering technique)
+- **Axial tilt** applied to all planets using real astronomical values (Earth 23.4°, Uranus 97.8°, etc.)
+- **Satellite system**: famous moons orbit their parent planets with textures
+  - Luna (Earth), Io, Europa, Ganymede, Callisto (Jupiter), Titan (Saturn), Triton (Neptune)
+  - Phobos, Deimos, Enceladus, Rhea, Titania, Oberon rendered with solid-color fallback
+  - 7 texture files sourced from Solar System Scope (CC BY 4.0) and USGS/NASA (public domain)
+- **Satellite orbit rings** visible when a planet is selected (planet `baseColor` at 25% opacity)
+- **Satellite scaling** when planet is selected — proportional to planet size (`Math.max(2.5, planetSize × 0.15)`)
+- **Satellite tooltips** on hover showing moon name
+- **"Known Moons" section** in the planet info panel listing rendered satellites
+- **Camera orbit tracking**: after fly-to, camera follows the planet along its orbit maintaining angle and distance
+- **Smooth camera alignment**: exponential ease-out closes the fly-to gap over ~0.5 s instead of snapping
+- **FloatingMenuButton** (FAB): circular button in bottom-right corner, mobile-only
+  - Drawer mode (no planet selected): opens/closes planet list
+  - Panel mode (planet selected): shows/hides info panel without deselecting
+- **PlanetDrawer**: slide-up panel on mobile with full planet list and color indicators
+- `useIsMobile` hook for reactive mobile breakpoint detection
+
+### Fixed
+- Rotation direction corrected for Venus and Uranus (retrograde — negative `rotationSpeed`)
+- Unused `Satellite` import in `planets.ts` causing TypeScript build error on Vercel
+
+### Changed
+- **Mobile info panel**: decoupled from planet selection — FAB toggles panel visibility independently
+- **LoadingOverlay** moved outside R3F Canvas via `createPortal` — Lighthouse now detects it as real DOM FCP
+- Pre-React loading indicator added to `index.html` for instant FCP before JS downloads
+- Satellite textures excluded from module-level preload (~800 KB deferred until planet selected)
+- Planet sphere segments: 32 (desktop) / 24 (mobile)
+- Satellite sphere segments: 16 (desktop) / 8 (mobile)
+- On mobile: only textured satellites rendered (plain-color moons omitted)
+- Canvas `dpr={[1, 2]}` to cap pixel density on high-DPR screens
+
+---
+
+## [1.0.1] — 2026-04-11
+
+### Fixed
+- Attribution padding-top on mobile to avoid overlap with Header title
+
+---
+
 ## [0.11.0] — 2026-04-10 — Deploy en Vercel
 
 ### Added
