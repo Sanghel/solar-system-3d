@@ -1,4 +1,5 @@
 import { useTexture } from "@react-three/drei";
+import { AdditiveBlending } from "three";
 
 interface NebulaDef {
   path: string;
@@ -7,24 +8,26 @@ interface NebulaDef {
   opacity: number;
 }
 
+// Additive blending makes black pixels (value=0) invisible, so only the
+// bright nebula gas blends naturally into the scene without rectangular edges.
 const NEBULAE: NebulaDef[] = [
   {
     path: "/textures/nebulae/carina.jpg",
     position: [-180, 60, -380],
-    scale: 220,
-    opacity: 0.18,
+    scale: 280,
+    opacity: 0.55,
   },
   {
     path: "/textures/nebulae/orion.jpg",
-    position: [200, -40, -350],
-    scale: 180,
-    opacity: 0.15,
+    position: [220, -30, -350],
+    scale: 240,
+    opacity: 0.45,
   },
   {
     path: "/textures/nebulae/eagle.jpg",
-    position: [-60, -120, -400],
-    scale: 200,
-    opacity: 0.12,
+    position: [-50, -100, -400],
+    scale: 260,
+    opacity: 0.4,
   },
 ];
 
@@ -34,9 +37,10 @@ function NebulaSprite({ path, position, scale, opacity }: NebulaDef) {
     <sprite position={position} scale={[scale, scale, 1]}>
       <spriteMaterial
         map={texture}
-        transparent
+        blending={AdditiveBlending}
         opacity={opacity}
         depthWrite={false}
+        transparent
       />
     </sprite>
   );
