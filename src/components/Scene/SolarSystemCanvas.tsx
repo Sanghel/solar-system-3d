@@ -5,9 +5,7 @@ import type { ReactNode } from "react";
 import { Mesh } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { CameraController } from "./CameraController";
-import { StarField } from "./StarField";
-import { Nebula } from "./Nebula";
-import { Constellations } from "./Constellations";
+import { BackgroundScene } from "./BackgroundScene";
 import type { Planet } from "../../types/planet";
 
 interface SolarSystemCanvasProps {
@@ -42,10 +40,8 @@ export const SolarSystemCanvas = ({
       {/* Black space background */}
       <color attach="background" args={["#000000"]} />
 
-      {/* Space environment */}
-      <StarField />
-      <Nebula />
-      <Constellations />
+      {/* Space environment — follows camera so background is always behind the scene */}
+      <BackgroundScene />
 
       {/* Orbit Controls for camera navigation */}
       <OrbitControls

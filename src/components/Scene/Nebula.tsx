@@ -1,4 +1,5 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { DoubleSide } from "three";
 import type { Mesh } from "three";
@@ -63,9 +64,10 @@ function NebulaPlane({ path, position, scale, opacity }: NebulaDef) {
     [texture, opacity]
   );
 
-  useEffect(() => {
-    ref.current?.lookAt(0, 0, 0);
-  }, []);
+  // Copy camera quaternion each frame so the plane always faces the viewer
+  useFrame(({ camera }) => {
+    ref.current?.quaternion.copy(camera.quaternion);
+  });
 
   return (
     <mesh ref={ref} position={position}>
